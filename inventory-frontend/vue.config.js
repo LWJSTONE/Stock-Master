@@ -15,9 +15,11 @@ module.exports = {
   devServer: {
     port: 8081,
     open: true,
-    overlay: {
-      warnings: false,
-      errors: true
+    client: {
+      overlay: {
+        warnings: false,
+        errors: true
+      }
     },
     proxy: {
       '/api': {
@@ -28,12 +30,15 @@ module.exports = {
         }
       }
     },
-    disableHostCheck: true
+    allowedHosts: 'all'
   },
   configureWebpack: {
     resolve: {
       alias: {
         '@': resolve('src')
+      },
+      fallback: {
+        'path': false
       }
     }
   },

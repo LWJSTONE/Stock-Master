@@ -49,7 +49,6 @@ public class SysRoleController {
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize,
             @ApiParam("角色名称") @RequestParam(required = false) String roleName,
             @ApiParam("状态") @RequestParam(required = false) String status) {
-        // 构建查询条件
         SysRole role = new SysRole();
         role.setRoleName(roleName);
         role.setStatus(status);
@@ -139,9 +138,7 @@ public class SysRoleController {
     @Log(title = "角色管理", action = BusinessType.GRANT)
     @PutMapping("/allotMenu")
     public Result<Void> allotMenu(@Validated @RequestBody AllotMenuDto allotMenuDto) {
-        Long[] menuIdArray = allotMenuDto.getMenuIds() != null ? 
-                allotMenuDto.getMenuIds().toArray(new Long[0]) : new Long[0];
-        return sysRoleService.assignMenu(allotMenuDto.getRoleId(), menuIdArray) > 0 
-                ? Result.success() : Result.error("分配菜单权限失败");
+        int result = sysRoleService.assignMenu(allotMenuDto.getRoleId(), allotMenuDto.getMenuIds().toArray(new Long[0]));
+        return result > 0 ? Result.success() : Result.error("分配菜单权限失败");
     }
 }

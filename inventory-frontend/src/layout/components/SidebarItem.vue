@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import path from 'path'
 import Item from './Item.vue'
 import AppLink from './Link.vue'
 
@@ -80,7 +79,9 @@ export default {
       if (routePath.startsWith('http')) {
         return routePath
       }
-      return path.resolve(this.basePath, routePath)
+      // 简单的路径解析，不依赖path模块
+      const base = this.basePath.endsWith('/') ? this.basePath : this.basePath + '/'
+      return base + routePath
     }
   }
 }

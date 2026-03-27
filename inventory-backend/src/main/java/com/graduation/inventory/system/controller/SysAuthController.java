@@ -81,6 +81,6 @@ public class SysAuthController {
     @PostMapping("/logout")
     public Result<Void> logout() {
         sysAuthService.logout();
-        return Result.<Void>success("退出成功", null);
+        return Result.success("退出成功", null);
     }
 }

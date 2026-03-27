@@ -309,13 +309,6 @@
               v-for="item in warehouseOptions"
               :key="item.id"
               :label="item.name"
-              :value="600px">
-        <el-form-item label="入库仓库" prop="warehouseId">
-          <el-select v-model="inboundForm.warehouseId" placeholder="请选择仓库" style="width: 100%">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.id"
-              :label="item.name"
               :value="item.id"
             />
           </el-select>

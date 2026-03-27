@@ -43,7 +43,6 @@ public class SysMenuController {
     public Result<List<SysMenu>> list(
             @ApiParam("菜单名称") @RequestParam(required = false) String menuName,
             @ApiParam("状态") @RequestParam(required = false) String status) {
-        // 构建查询条件
         SysMenu menu = new SysMenu();
         menu.setMenuName(menuName);
         menu.setStatus(status);

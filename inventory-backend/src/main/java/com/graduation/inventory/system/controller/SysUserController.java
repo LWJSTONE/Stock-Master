@@ -1,5 +1,6 @@
 package com.graduation.inventory.system.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.graduation.inventory.common.annotation.Log;
 import com.graduation.inventory.common.domain.PageResult;
 import com.graduation.inventory.common.domain.Result;
@@ -52,7 +53,6 @@ public class SysUserController {
             @ApiParam("用户名") @RequestParam(required = false) String username,
             @ApiParam("状态") @RequestParam(required = false) String status,
             @ApiParam("部门ID") @RequestParam(required = false) Long deptId) {
-        // 构建查询条件
         SysUser user = new SysUser();
         user.setUsername(username);
         user.setStatus(status);
@@ -137,8 +137,7 @@ public class SysUserController {
         SysUser user = new SysUser();
         user.setId(resetPwdDto.getUserId());
         user.setPassword(resetPwdDto.getPassword());
-        return sysUserService.resetPwd(user) > 0 
-                ? Result.success() : Result.error("重置密码失败");
+        return sysUserService.resetPwd(user) > 0 ? Result.success() : Result.error("重置密码失败");
     }
 
     /**
@@ -155,7 +154,6 @@ public class SysUserController {
         SysUser user = new SysUser();
         user.setId(statusDto.getUserId());
         user.setStatus(statusDto.getStatus());
-        return sysUserService.updateStatus(user) > 0 
-                ? Result.success() : Result.error("修改用户状态失败");
+        return sysUserService.updateStatus(user) > 0 ? Result.success() : Result.error("修改用户状态失败");
     }
 }
