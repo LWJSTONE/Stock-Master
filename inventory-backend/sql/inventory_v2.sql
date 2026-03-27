@@ -6,6 +6,9 @@
 -- 创建时间: 2024-01-01
 -- =============================================
 
+-- 删除已存在的数据库（如果存在）
+DROP DATABASE IF EXISTS `inventory_v2`;
+
 -- 创建数据库
 CREATE DATABASE IF NOT EXISTS `inventory_v2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -417,7 +420,7 @@ INSERT INTO `sys_role` (`id`, `role_name`, `role_key`, `data_scope`, `status`, `
 
 -- 初始化用户数据 (密码: 123456)
 INSERT INTO `sys_user` (`id`, `username`, `password`, `real_name`, `phone`, `email`, `dept_id`, `status`, `create_by`) VALUES
-(1, 'admin', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE/TU.qHPjj/G6', '系统管理员', '13800138000', 'admin@example.com', 1, 1, 1);
+(1, 'admin', '$2a$10$s/6K.oSU5QmSElA9YoRcneb.RhpBhmFMWOaFh1jtYg5e6NQkivm6K', '系统管理员', '13800138000', 'admin@example.com', 1, 1, 1);
 
 -- 初始化用户角色关联
 INSERT INTO `sys_user_role` (`user_id`, `role_id`) VALUES
