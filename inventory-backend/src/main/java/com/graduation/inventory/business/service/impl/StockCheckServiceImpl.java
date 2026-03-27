@@ -6,6 +6,7 @@ import com.graduation.inventory.base.entity.BaseProductSku;
 import com.graduation.inventory.base.mapper.BaseProductSkuMapper;
 import com.graduation.inventory.business.entity.BusStockCheck;
 import com.graduation.inventory.business.entity.BusStockCheckItem;
+import com.graduation.inventory.business.entity.StockMain;
 import com.graduation.inventory.business.mapper.BusStockCheckItemMapper;
 import com.graduation.inventory.business.mapper.BusStockCheckMapper;
 import com.graduation.inventory.business.service.StockCheckService;

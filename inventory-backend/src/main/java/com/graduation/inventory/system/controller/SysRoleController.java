@@ -1,6 +1,5 @@
 package com.graduation.inventory.system.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.graduation.inventory.common.annotation.Log;
 import com.graduation.inventory.common.domain.PageResult;
 import com.graduation.inventory.common.domain.Result;
@@ -17,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 角色控制器
@@ -49,9 +49,16 @@ public class SysRoleController {
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize,
             @ApiParam("角色名称") @RequestParam(required = false) String roleName,
             @ApiParam("状态") @RequestParam(required = false) String status) {
-        Page<SysRole> page = new Page<>(pageNum, pageSize);
-        Page<SysRole> result = sysRoleService.selectRoleList(page, roleName, status);
-        return Result.success(new PageResult<>(result.getRecords(), result.getTotal()));
+        // 构建查询条件
+        SysRole role = new SysRole();
+        role.setRoleName(roleName);
+        role.setStatus(status);
+        List<SysRole> list = sysRoleService.selectRoleList(role);
+        // 手动分页
+        int start = (pageNum - 1) * pageSize;
+        int end = Math.min(start + pageSize, list.size());
+        List<SysRole> pageList = list.subList(start, end);
+        return Result.success(new PageResult<>(pageList, (long) list.size()));
     }
 
     /**
@@ -132,7 +139,9 @@ public class SysRoleController {
     @Log(title = "角色管理", action = BusinessType.GRANT)
     @PutMapping("/allotMenu")
     public Result<Void> allotMenu(@Validated @RequestBody AllotMenuDto allotMenuDto) {
-        return sysRoleService.allotMenu(allotMenuDto.getRoleId(), allotMenuDto.getMenuIds()) 
+        Long[] menuIdArray = allotMenuDto.getMenuIds() != null ? 
+                allotMenuDto.getMenuIds().toArray(new Long[0]) : new Long[0];
+        return sysRoleService.assignMenu(allotMenuDto.getRoleId(), menuIdArray) > 0 
                 ? Result.success() : Result.error("分配菜单权限失败");
     }
 }

@@ -4,7 +4,6 @@ import com.graduation.inventory.common.annotation.Log;
 import com.graduation.inventory.common.domain.Result;
 import com.graduation.inventory.common.enums.BusinessType;
 import com.graduation.inventory.system.entity.SysDept;
-import com.graduation.inventory.system.entity.dto.DeptTreeVo;
 import com.graduation.inventory.system.service.SysDeptService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -43,7 +42,11 @@ public class SysDeptController {
     public Result<List<SysDept>> list(
             @ApiParam("部门名称") @RequestParam(required = false) String deptName,
             @ApiParam("状态") @RequestParam(required = false) String status) {
-        List<SysDept> depts = sysDeptService.selectDeptList(deptName, status);
+        // 构建查询条件
+        SysDept dept = new SysDept();
+        dept.setDeptName(deptName);
+        dept.setStatus(status);
+        List<SysDept> depts = sysDeptService.selectDeptList(dept);
         return Result.success(depts);
     }
 
@@ -67,8 +70,9 @@ public class SysDeptController {
      */
     @ApiOperation("获取部门树")
     @GetMapping("/tree")
-    public Result<List<DeptTreeVo>> tree() {
-        List<DeptTreeVo> tree = sysDeptService.getDeptTree();
+    public Result<List<SysDept>> tree() {
+        List<SysDept> depts = sysDeptService.selectDeptList(new SysDept());
+        List<SysDept> tree = sysDeptService.buildDeptTree(depts);
         return Result.success(tree);
     }
 

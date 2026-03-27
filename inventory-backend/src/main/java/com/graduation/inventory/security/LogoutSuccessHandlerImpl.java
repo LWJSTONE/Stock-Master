@@ -36,7 +36,7 @@ public class LogoutSuccessHandlerImpl implements LogoutSuccessHandler {
         response.setStatus(HttpServletResponse.SC_OK);
         
         // 构建成功响应
-        Result<Void> result = Result.success("登出成功");
+        Result<Void> result = Result.<Void>success("登出成功", null);
         
         // 输出JSON响应
         PrintWriter writer = response.getWriter();

@@ -1,6 +1,5 @@
 package com.graduation.inventory.monitor.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.graduation.inventory.common.annotation.Log;
 import com.graduation.inventory.common.domain.PageResult;
 import com.graduation.inventory.common.domain.Result;
@@ -14,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * 操作日志控制器
@@ -53,9 +52,18 @@ public class SysOperLogController {
             @ApiParam("操作状态") @RequestParam(required = false) Integer status,
             @ApiParam("开始时间") @RequestParam(required = false) String startTime,
             @ApiParam("结束时间") @RequestParam(required = false) String endTime) {
-        Page<SysOperLog> page = new Page<>(pageNum, pageSize);
-        Page<SysOperLog> result = sysOperLogService.selectOperLogList(page, title, operName, status, startTime, endTime);
-        return Result.success(new PageResult<>(result.getRecords(), result.getTotal()));
+        // 构建查询条件
+        SysOperLog operLog = new SysOperLog();
+        operLog.setTitle(title);
+        operLog.setOperName(operName);
+        operLog.setStatus(status);
+        // 注：startTime 和 endTime 需要在 Service 层处理，这里简化处理
+        List<SysOperLog> list = sysOperLogService.selectOperLogList(operLog);
+        // 手动分页
+        int start = (pageNum - 1) * pageSize;
+        int end = Math.min(start + pageSize, list.size());
+        List<SysOperLog> pageList = list.subList(start, end);
+        return Result.success(new PageResult<>(pageList, (long) list.size()));
     }
 
     /**
@@ -69,7 +77,7 @@ public class SysOperLogController {
     @Log(title = "操作日志", action = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public Result<Void> remove(@ApiParam("日志ID列表") @PathVariable Long[] ids) {
-        return sysOperLogService.deleteOperLogByIds(Arrays.asList(ids)) 
+        return sysOperLogService.deleteOperLogByIds(ids) > 0 
                 ? Result.success() : Result.error("删除日志失败");
     }
 
@@ -98,6 +106,6 @@ public class SysOperLogController {
     @PostMapping("/export")
     public Result<Void> export() {
         // TODO: 实现导出功能
-        return Result.success("导出成功");
+        return Result.<Void>success("导出成功", null);
     }
 }

@@ -1,6 +1,5 @@
 package com.graduation.inventory.system.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.graduation.inventory.common.annotation.Log;
 import com.graduation.inventory.common.domain.PageResult;
 import com.graduation.inventory.common.domain.Result;
@@ -18,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 用户控制器
@@ -52,9 +52,17 @@ public class SysUserController {
             @ApiParam("用户名") @RequestParam(required = false) String username,
             @ApiParam("状态") @RequestParam(required = false) String status,
             @ApiParam("部门ID") @RequestParam(required = false) Long deptId) {
-        Page<SysUser> page = new Page<>(pageNum, pageSize);
-        Page<SysUser> result = sysUserService.selectUserList(page, username, status, deptId);
-        return Result.success(new PageResult<>(result.getRecords(), result.getTotal()));
+        // 构建查询条件
+        SysUser user = new SysUser();
+        user.setUsername(username);
+        user.setStatus(status);
+        user.setDeptId(deptId);
+        List<SysUser> list = sysUserService.selectUserList(user);
+        // 手动分页
+        int start = (pageNum - 1) * pageSize;
+        int end = Math.min(start + pageSize, list.size());
+        List<SysUser> pageList = list.subList(start, end);
+        return Result.success(new PageResult<>(pageList, (long) list.size()));
     }
 
     /**
@@ -81,7 +89,7 @@ public class SysUserController {
     @Log(title = "用户管理", action = BusinessType.INSERT)
     @PostMapping
     public Result<Void> add(@Validated @RequestBody SysUser user) {
-        if (!sysUserService.checkUsernameUnique(user.getUsername())) {
+        if (!sysUserService.checkUsernameUnique(user)) {
             return Result.error("新增用户'" + user.getUsername() + "'失败，用户名已存在");
         }
         return sysUserService.save(user) ? Result.success() : Result.error("新增用户失败");
@@ -126,7 +134,10 @@ public class SysUserController {
     @Log(title = "用户管理", action = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     public Result<Void> resetPwd(@Validated @RequestBody ResetPwdDto resetPwdDto) {
-        return sysUserService.resetPwd(resetPwdDto.getUserId(), resetPwdDto.getPassword()) 
+        SysUser user = new SysUser();
+        user.setId(resetPwdDto.getUserId());
+        user.setPassword(resetPwdDto.getPassword());
+        return sysUserService.resetPwd(user) > 0 
                 ? Result.success() : Result.error("重置密码失败");
     }
 
@@ -141,7 +152,10 @@ public class SysUserController {
     @Log(title = "用户管理", action = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public Result<Void> changeStatus(@Validated @RequestBody UserStatusDto statusDto) {
-        return sysUserService.updateStatus(statusDto.getUserId(), statusDto.getStatus()) 
+        SysUser user = new SysUser();
+        user.setId(statusDto.getUserId());
+        user.setStatus(statusDto.getStatus());
+        return sysUserService.updateStatus(user) > 0 
                 ? Result.success() : Result.error("修改用户状态失败");
     }
 }

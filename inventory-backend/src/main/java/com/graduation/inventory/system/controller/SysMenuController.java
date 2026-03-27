@@ -43,7 +43,11 @@ public class SysMenuController {
     public Result<List<SysMenu>> list(
             @ApiParam("菜单名称") @RequestParam(required = false) String menuName,
             @ApiParam("状态") @RequestParam(required = false) String status) {
-        List<SysMenu> menus = sysMenuService.selectMenuList(menuName, status);
+        // 构建查询条件
+        SysMenu menu = new SysMenu();
+        menu.setMenuName(menuName);
+        menu.setStatus(status);
+        List<SysMenu> menus = sysMenuService.selectMenuList(menu);
         return Result.success(menus);
     }
 
@@ -68,7 +72,8 @@ public class SysMenuController {
     @ApiOperation("获取菜单树")
     @GetMapping("/tree")
     public Result<List<MenuTreeVo>> tree() {
-        List<MenuTreeVo> tree = sysMenuService.getMenuTree();
+        List<SysMenu> menus = sysMenuService.selectMenuList(new SysMenu());
+        List<MenuTreeVo> tree = sysMenuService.buildMenuTree(menus);
         return Result.success(tree);
     }
 
