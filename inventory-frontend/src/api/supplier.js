@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取供应商列表
 export function getSupplierList(params) {
   return request({
-    url: '/supplier/list',
+    url: '/api/supplier/list',
     method: 'get',
     params
   })
@@ -12,7 +12,7 @@ export function getSupplierList(params) {
 // 获取供应商详情
 export function getSupplierDetail(id) {
   return request({
-    url: `/supplier/${id}`,
+    url: `/api/supplier/${id}`,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getSupplierDetail(id) {
 // 创建供应商
 export function createSupplier(data) {
   return request({
-    url: '/supplier',
+    url: '/api/supplier',
     method: 'post',
     data
   })
@@ -29,7 +29,7 @@ export function createSupplier(data) {
 // 更新供应商
 export function updateSupplier(data) {
   return request({
-    url: '/supplier',
+    url: '/api/supplier',
     method: 'put',
     data
   })
@@ -38,7 +38,7 @@ export function updateSupplier(data) {
 // 删除供应商
 export function deleteSupplier(id) {
   return request({
-    url: `/supplier/${id}`,
+    url: `/api/supplier/${id}`,
     method: 'delete'
   })
 }

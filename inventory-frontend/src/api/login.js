@@ -5,11 +5,10 @@ import request from '@/utils/request'
  * @param {Object} data - 登录信息
  * @param {string} data.username - 用户名
  * @param {string} data.password - 密码
- * @param {boolean} data.rememberMe - 记住密码
  */
 export function login(data) {
   return request({
-    url: '/auth/login',
+    url: '/api/auth/login',
     method: 'post',
     data
   })
@@ -20,7 +19,7 @@ export function login(data) {
  */
 export function logout() {
   return request({
-    url: '/auth/logout',
+    url: '/api/auth/logout',
     method: 'post'
   })
 }
@@ -31,7 +30,7 @@ export function logout() {
  */
 export function getInfo() {
   return request({
-    url: '/user/info',
+    url: '/api/auth/getInfo',
     method: 'get'
   })
 }
@@ -42,7 +41,7 @@ export function getInfo() {
  */
 export function getRouters() {
   return request({
-    url: '/user/routers',
+    url: '/api/auth/getRouters',
     method: 'get'
   })
 }

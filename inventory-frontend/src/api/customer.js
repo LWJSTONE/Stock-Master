@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取客户列表
 export function getCustomerList(params) {
   return request({
-    url: '/customer/list',
+    url: '/api/customer/list',
     method: 'get',
     params
   })
@@ -12,7 +12,7 @@ export function getCustomerList(params) {
 // 获取客户详情
 export function getCustomerDetail(id) {
   return request({
-    url: `/customer/${id}`,
+    url: `/api/customer/${id}`,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getCustomerDetail(id) {
 // 创建客户
 export function createCustomer(data) {
   return request({
-    url: '/customer',
+    url: '/api/customer',
     method: 'post',
     data
   })
@@ -29,7 +29,7 @@ export function createCustomer(data) {
 // 更新客户
 export function updateCustomer(data) {
   return request({
-    url: '/customer',
+    url: '/api/customer',
     method: 'put',
     data
   })
@@ -38,7 +38,7 @@ export function updateCustomer(data) {
 // 删除客户
 export function deleteCustomer(id) {
   return request({
-    url: `/customer/${id}`,
+    url: `/api/customer/${id}`,
     method: 'delete'
   })
 }

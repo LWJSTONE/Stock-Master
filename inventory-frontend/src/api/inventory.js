@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取库存列表
 export function getInventoryList(params) {
   return request({
-    url: '/inventory/list',
+    url: '/api/inventory/list',
     method: 'get',
     params
   })
@@ -12,7 +12,7 @@ export function getInventoryList(params) {
 // 获取库存详情
 export function getInventoryDetail(id) {
   return request({
-    url: `/inventory/${id}`,
+    url: `/api/inventory/${id}`,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getInventoryDetail(id) {
 // 获取库存统计
 export function getInventoryStats() {
   return request({
-    url: '/inventory/stats',
+    url: '/api/inventory/stats',
     method: 'get'
   })
 }
@@ -28,7 +28,7 @@ export function getInventoryStats() {
 // 获取库存预警列表
 export function getInventoryWarning(params) {
   return request({
-    url: '/inventory/warning',
+    url: '/api/inventory/warning',
     method: 'get',
     params
   })
@@ -37,7 +37,7 @@ export function getInventoryWarning(params) {
 // 调整库存
 export function adjustInventory(data) {
   return request({
-    url: '/inventory/adjust',
+    url: '/api/inventory/adjust',
     method: 'post',
     data
   })

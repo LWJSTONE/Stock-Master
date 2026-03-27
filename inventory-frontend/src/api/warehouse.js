@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取仓库列表
 export function getWarehouseList(params) {
   return request({
-    url: '/warehouse/list',
+    url: '/api/warehouse/list',
     method: 'get',
     params
   })
@@ -12,7 +12,7 @@ export function getWarehouseList(params) {
 // 获取仓库详情
 export function getWarehouseDetail(id) {
   return request({
-    url: `/warehouse/${id}`,
+    url: `/api/warehouse/${id}`,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getWarehouseDetail(id) {
 // 创建仓库
 export function createWarehouse(data) {
   return request({
-    url: '/warehouse',
+    url: '/api/warehouse',
     method: 'post',
     data
   })
@@ -29,7 +29,7 @@ export function createWarehouse(data) {
 // 更新仓库
 export function updateWarehouse(data) {
   return request({
-    url: '/warehouse',
+    url: '/api/warehouse',
     method: 'put',
     data
   })
@@ -38,7 +38,7 @@ export function updateWarehouse(data) {
 // 删除仓库
 export function deleteWarehouse(id) {
   return request({
-    url: `/warehouse/${id}`,
+    url: `/api/warehouse/${id}`,
     method: 'delete'
   })
 }

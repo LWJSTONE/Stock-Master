@@ -47,11 +47,12 @@ const actions = {
   // 获取用户信息
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      getInfo().then(response => {
         const { data } = response
 
         if (!data) {
           reject('验证失败，请重新登录。')
+          return
         }
 
         const { roles, name, avatar, permissions } = data
@@ -59,6 +60,7 @@ const actions = {
         // 角色必须是非空数组
         if (!roles || roles.length <= 0) {
           reject('该用户没有角色')
+          return
         }
 
         commit('SET_ROLES', roles)
@@ -75,7 +77,7 @@ const actions = {
   // 用户登出
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      logout().then(() => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         commit('SET_PERMISSIONS', [])

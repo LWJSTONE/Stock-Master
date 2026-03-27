@@ -5,7 +5,7 @@ import request from '@/utils/request'
 // 获取用户列表
 export function getUserList(params) {
   return request({
-    url: '/system/user/list',
+    url: '/api/system/user/list',
     method: 'get',
     params
   })
@@ -14,7 +14,7 @@ export function getUserList(params) {
 // 获取用户详情
 export function getUserDetail(id) {
   return request({
-    url: `/system/user/${id}`,
+    url: `/api/system/user/${id}`,
     method: 'get'
   })
 }
@@ -22,7 +22,7 @@ export function getUserDetail(id) {
 // 创建用户
 export function createUser(data) {
   return request({
-    url: '/system/user',
+    url: '/api/system/user',
     method: 'post',
     data
   })
@@ -31,7 +31,7 @@ export function createUser(data) {
 // 更新用户
 export function updateUser(data) {
   return request({
-    url: '/system/user',
+    url: '/api/system/user',
     method: 'put',
     data
   })
@@ -40,7 +40,7 @@ export function updateUser(data) {
 // 删除用户
 export function deleteUser(id) {
   return request({
-    url: `/system/user/${id}`,
+    url: `/api/system/user/${id}`,
     method: 'delete'
   })
 }
@@ -48,7 +48,7 @@ export function deleteUser(id) {
 // 批量删除用户
 export function batchDeleteUsers(ids) {
   return request({
-    url: '/system/user/batch',
+    url: '/api/system/user/batch',
     method: 'delete',
     data: ids
   })
@@ -57,24 +57,25 @@ export function batchDeleteUsers(ids) {
 // 重置密码
 export function resetPassword(id) {
   return request({
-    url: `/system/user/reset-password/${id}`,
-    method: 'put'
+    url: `/api/system/user/resetPwd`,
+    method: 'put',
+    data: { userId: id }
   })
 }
 
 // 修改用户状态
 export function changeUserStatus(id, status) {
   return request({
-    url: `/system/user/status/${id}`,
+    url: `/api/system/user/changeStatus`,
     method: 'put',
-    params: { status }
+    data: { userId: id, status }
   })
 }
 
 // 导出用户
 export function exportUser(params) {
   return request({
-    url: '/system/user/export',
+    url: '/api/system/user/export',
     method: 'get',
     params,
     responseType: 'blob'
@@ -86,7 +87,7 @@ export function exportUser(params) {
 // 获取角色列表
 export function getRoleList(params) {
   return request({
-    url: '/system/role/list',
+    url: '/api/system/role/list',
     method: 'get',
     params
   })
@@ -95,7 +96,7 @@ export function getRoleList(params) {
 // 获取所有角色（下拉选择用）
 export function getAllRoles() {
   return request({
-    url: '/system/role/all',
+    url: '/api/system/role/all',
     method: 'get'
   })
 }
@@ -103,7 +104,7 @@ export function getAllRoles() {
 // 获取角色详情
 export function getRoleDetail(id) {
   return request({
-    url: `/system/role/${id}`,
+    url: `/api/system/role/${id}`,
     method: 'get'
   })
 }
@@ -111,7 +112,7 @@ export function getRoleDetail(id) {
 // 创建角色
 export function createRole(data) {
   return request({
-    url: '/system/role',
+    url: '/api/system/role',
     method: 'post',
     data
   })
@@ -120,7 +121,7 @@ export function createRole(data) {
 // 更新角色
 export function updateRole(data) {
   return request({
-    url: '/system/role',
+    url: '/api/system/role',
     method: 'put',
     data
   })
@@ -129,7 +130,7 @@ export function updateRole(data) {
 // 删除角色
 export function deleteRole(id) {
   return request({
-    url: `/system/role/${id}`,
+    url: `/api/system/role/${id}`,
     method: 'delete'
   })
 }
@@ -137,7 +138,7 @@ export function deleteRole(id) {
 // 修改角色状态
 export function changeRoleStatus(id, status) {
   return request({
-    url: `/system/role/status/${id}`,
+    url: `/api/system/role/status/${id}`,
     method: 'put',
     params: { status }
   })
@@ -146,7 +147,7 @@ export function changeRoleStatus(id, status) {
 // 获取角色菜单权限
 export function getRoleMenus(roleId) {
   return request({
-    url: `/system/role/menu/${roleId}`,
+    url: `/api/system/role/menu/${roleId}`,
     method: 'get'
   })
 }
@@ -154,16 +155,16 @@ export function getRoleMenus(roleId) {
 // 分配角色菜单权限
 export function assignRoleMenus(roleId, menuIds) {
   return request({
-    url: `/system/role/menu/${roleId}`,
+    url: `/api/system/role/allotMenu`,
     method: 'put',
-    data: menuIds
+    data: { roleId, menuIds }
   })
 }
 
 // 导出角色
 export function exportRole(params) {
   return request({
-    url: '/system/role/export',
+    url: '/api/system/role/export',
     method: 'get',
     params,
     responseType: 'blob'
@@ -175,7 +176,7 @@ export function exportRole(params) {
 // 获取菜单列表（树形）
 export function getMenuList(params) {
   return request({
-    url: '/system/menu/list',
+    url: '/api/system/menu/list',
     method: 'get',
     params
   })
@@ -184,7 +185,7 @@ export function getMenuList(params) {
 // 获取菜单树（用于下拉选择）
 export function getMenuTree() {
   return request({
-    url: '/system/menu/tree',
+    url: '/api/system/menu/tree',
     method: 'get'
   })
 }
@@ -192,7 +193,7 @@ export function getMenuTree() {
 // 获取菜单详情
 export function getMenuDetail(id) {
   return request({
-    url: `/system/menu/${id}`,
+    url: `/api/system/menu/${id}`,
     method: 'get'
   })
 }
@@ -200,7 +201,7 @@ export function getMenuDetail(id) {
 // 创建菜单
 export function createMenu(data) {
   return request({
-    url: '/system/menu',
+    url: '/api/system/menu',
     method: 'post',
     data
   })
@@ -209,7 +210,7 @@ export function createMenu(data) {
 // 更新菜单
 export function updateMenu(data) {
   return request({
-    url: '/system/menu',
+    url: '/api/system/menu',
     method: 'put',
     data
   })
@@ -218,7 +219,7 @@ export function updateMenu(data) {
 // 删除菜单
 export function deleteMenu(id) {
   return request({
-    url: `/system/menu/${id}`,
+    url: `/api/system/menu/${id}`,
     method: 'delete'
   })
 }
@@ -226,7 +227,7 @@ export function deleteMenu(id) {
 // 获取图标列表
 export function getIconList() {
   return request({
-    url: '/system/menu/icons',
+    url: '/api/system/menu/icons',
     method: 'get'
   })
 }
@@ -236,7 +237,7 @@ export function getIconList() {
 // 获取部门列表（树形）
 export function getDeptList(params) {
   return request({
-    url: '/system/dept/list',
+    url: '/api/system/dept/list',
     method: 'get',
     params
   })
@@ -245,7 +246,7 @@ export function getDeptList(params) {
 // 获取部门树（用于下拉选择）
 export function getDeptTree() {
   return request({
-    url: '/system/dept/tree',
+    url: '/api/system/dept/tree',
     method: 'get'
   })
 }
@@ -253,7 +254,7 @@ export function getDeptTree() {
 // 获取部门详情
 export function getDeptDetail(id) {
   return request({
-    url: `/system/dept/${id}`,
+    url: `/api/system/dept/${id}`,
     method: 'get'
   })
 }
@@ -261,7 +262,7 @@ export function getDeptDetail(id) {
 // 创建部门
 export function createDept(data) {
   return request({
-    url: '/system/dept',
+    url: '/api/system/dept',
     method: 'post',
     data
   })
@@ -270,7 +271,7 @@ export function createDept(data) {
 // 更新部门
 export function updateDept(data) {
   return request({
-    url: '/system/dept',
+    url: '/api/system/dept',
     method: 'put',
     data
   })
@@ -279,7 +280,7 @@ export function updateDept(data) {
 // 删除部门
 export function deleteDept(id) {
   return request({
-    url: `/system/dept/${id}`,
+    url: `/api/system/dept/${id}`,
     method: 'delete'
   })
 }
@@ -287,7 +288,7 @@ export function deleteDept(id) {
 // 修改部门状态
 export function changeDeptStatus(id, status) {
   return request({
-    url: `/system/dept/status/${id}`,
+    url: `/api/system/dept/status/${id}`,
     method: 'put',
     params: { status }
   })

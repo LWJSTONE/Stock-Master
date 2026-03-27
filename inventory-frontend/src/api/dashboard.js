@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function getOverview() {
   return request({
-    url: '/dashboard/overview',
+    url: '/api/dashboard/overview',
     method: 'get'
   })
 }
@@ -19,7 +19,7 @@ export function getOverview() {
  */
 export function getTrend(params) {
   return request({
-    url: '/dashboard/trend',
+    url: '/api/dashboard/trend',
     method: 'get',
     params
   })
@@ -31,7 +31,7 @@ export function getTrend(params) {
  */
 export function getCategoryRatio() {
   return request({
-    url: '/dashboard/category-ratio',
+    url: '/api/dashboard/category-ratio',
     method: 'get'
   })
 }
@@ -45,7 +45,7 @@ export function getCategoryRatio() {
  */
 export function getWarningList(params) {
   return request({
-    url: '/dashboard/warning-list',
+    url: '/api/dashboard/warning-list',
     method: 'get',
     params
   })
@@ -59,7 +59,7 @@ export function getWarningList(params) {
  */
 export function getTopProducts(params) {
   return request({
-    url: '/dashboard/top-products',
+    url: '/api/dashboard/top-products',
     method: 'get',
     params
   })
@@ -71,7 +71,7 @@ export function getTopProducts(params) {
  */
 export function getRealTimeData() {
   return request({
-    url: '/dashboard/realtime',
+    url: '/api/dashboard/realtime',
     method: 'get'
   })
 }

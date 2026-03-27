@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取出库单列表
 export function getOutboundList(params) {
   return request({
-    url: '/outbound/list',
+    url: '/api/outbound/list',
     method: 'get',
     params
   })
@@ -12,7 +12,7 @@ export function getOutboundList(params) {
 // 获取出库单详情
 export function getOutboundDetail(id) {
   return request({
-    url: `/outbound/${id}`,
+    url: `/api/outbound/${id}`,
     method: 'get'
   })
 }
@@ -20,7 +20,7 @@ export function getOutboundDetail(id) {
 // 创建出库单
 export function createOutbound(data) {
   return request({
-    url: '/outbound',
+    url: '/api/outbound',
     method: 'post',
     data
   })
@@ -29,7 +29,7 @@ export function createOutbound(data) {
 // 更新出库单
 export function updateOutbound(data) {
   return request({
-    url: '/outbound',
+    url: '/api/outbound',
     method: 'put',
     data
   })
@@ -38,7 +38,7 @@ export function updateOutbound(data) {
 // 删除出库单
 export function deleteOutbound(id) {
   return request({
-    url: `/outbound/${id}`,
+    url: `/api/outbound/${id}`,
     method: 'delete'
   })
 }
@@ -46,7 +46,7 @@ export function deleteOutbound(id) {
 // 审核出库单
 export function approveOutbound(id) {
   return request({
-    url: `/outbound/${id}/approve`,
+    url: `/api/outbound/${id}/approve`,
     method: 'post'
   })
 }

@@ -5,7 +5,7 @@ import request from '@/utils/request'
 // 获取操作日志列表
 export function getLogList(params) {
   return request({
-    url: '/monitor/log/list',
+    url: '/api/monitor/log/list',
     method: 'get',
     params
   })
@@ -14,7 +14,7 @@ export function getLogList(params) {
 // 获取日志详情
 export function getLogDetail(id) {
   return request({
-    url: `/monitor/log/${id}`,
+    url: `/api/monitor/log/${id}`,
     method: 'get'
   })
 }
@@ -22,7 +22,7 @@ export function getLogDetail(id) {
 // 删除日志
 export function deleteLog(id) {
   return request({
-    url: `/monitor/log/${id}`,
+    url: `/api/monitor/log/${id}`,
     method: 'delete'
   })
 }
@@ -30,7 +30,7 @@ export function deleteLog(id) {
 // 清空日志
 export function clearLog() {
   return request({
-    url: '/monitor/log/clear',
+    url: '/api/monitor/log/clear',
     method: 'delete'
   })
 }
@@ -38,7 +38,7 @@ export function clearLog() {
 // 导出日志
 export function exportLog(params) {
   return request({
-    url: '/monitor/log/export',
+    url: '/api/monitor/log/export',
     method: 'get',
     params,
     responseType: 'blob'
@@ -48,7 +48,7 @@ export function exportLog(params) {
 // 获取操作类型列表
 export function getOperateTypes() {
   return request({
-    url: '/monitor/log/operate-types',
+    url: '/api/monitor/log/operate-types',
     method: 'get'
   })
 }
@@ -56,7 +56,7 @@ export function getOperateTypes() {
 // 获取模块列表
 export function getModules() {
   return request({
-    url: '/monitor/log/modules',
+    url: '/api/monitor/log/modules',
     method: 'get'
   })
 }
@@ -66,7 +66,7 @@ export function getModules() {
 // 获取在线用户列表
 export function getOnlineUsers(params) {
   return request({
-    url: '/monitor/online/list',
+    url: '/api/monitor/online/list',
     method: 'get',
     params
   })
@@ -75,7 +75,7 @@ export function getOnlineUsers(params) {
 // 强制下线
 export function forceLogout(token) {
   return request({
-    url: `/monitor/online/${token}`,
+    url: `/api/monitor/online/${token}`,
     method: 'delete'
   })
 }
@@ -85,7 +85,7 @@ export function forceLogout(token) {
 // 获取登录日志列表
 export function getLoginLogList(params) {
   return request({
-    url: '/monitor/login-log/list',
+    url: '/api/monitor/login-log/list',
     method: 'get',
     params
   })
@@ -94,7 +94,7 @@ export function getLoginLogList(params) {
 // 删除登录日志
 export function deleteLoginLog(id) {
   return request({
-    url: `/monitor/login-log/${id}`,
+    url: `/api/monitor/login-log/${id}`,
     method: 'delete'
   })
 }
@@ -102,7 +102,7 @@ export function deleteLoginLog(id) {
 // 清空登录日志
 export function clearLoginLog() {
   return request({
-    url: '/monitor/login-log/clear',
+    url: '/api/monitor/login-log/clear',
     method: 'delete'
   })
 }
@@ -110,7 +110,7 @@ export function clearLoginLog() {
 // 导出登录日志
 export function exportLoginLog(params) {
   return request({
-    url: '/monitor/login-log/export',
+    url: '/api/monitor/login-log/export',
     method: 'get',
     params,
     responseType: 'blob'
