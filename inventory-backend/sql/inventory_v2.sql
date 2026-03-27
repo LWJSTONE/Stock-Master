@@ -6,11 +6,15 @@
 -- 创建时间: 2024-01-01
 -- =============================================
 
+-- 设置字符集
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+
 -- 删除已存在的数据库（如果存在）
 DROP DATABASE IF EXISTS `inventory_v2`;
 
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS `inventory_v2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE `inventory_v2` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE `inventory_v2`;
 
@@ -136,7 +140,24 @@ CREATE TABLE `sys_oper_log` (
 -- 第二部分：基础档案模块
 -- =============================================
 
--- 8. 商品标准单元表(SPU)
+-- 8. 商品分类表
+DROP TABLE IF EXISTS `base_category`;
+CREATE TABLE `base_category` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '分类ID',
+    `parent_id` BIGINT DEFAULT 0 COMMENT '父分类ID',
+    `category_name` VARCHAR(50) NOT NULL COMMENT '分类名称',
+    `order_num` INT DEFAULT 0 COMMENT '显示顺序',
+    `status` TINYINT DEFAULT 1 COMMENT '状态(0禁用 1启用)',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `create_by` BIGINT DEFAULT NULL COMMENT '创建人',
+    `update_by` BIGINT DEFAULT NULL COMMENT '更新人',
+    `is_deleted` TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
+    PRIMARY KEY (`id`),
+    KEY `idx_parent_id` (`parent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品分类表';
+
+-- 9. 商品标准单元表(SPU)
 DROP TABLE IF EXISTS `base_product_spu`;
 CREATE TABLE `base_product_spu` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'SPU ID',
@@ -157,7 +178,7 @@ CREATE TABLE `base_product_spu` (
     KEY `idx_category_id` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品标准单元表';
 
--- 9. 商品库存单元表(SKU)
+-- 10. 商品库存单元表(SKU)
 DROP TABLE IF EXISTS `base_product_sku`;
 CREATE TABLE `base_product_sku` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'SKU ID',
@@ -179,7 +200,7 @@ CREATE TABLE `base_product_sku` (
     KEY `idx_spu_id` (`spu_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品库存单元表';
 
--- 10. 仓库表
+-- 11. 仓库表
 DROP TABLE IF EXISTS `base_warehouse`;
 CREATE TABLE `base_warehouse` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '仓库ID',
@@ -197,7 +218,7 @@ CREATE TABLE `base_warehouse` (
     UNIQUE KEY `uk_wh_code` (`wh_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='仓库表';
 
--- 11. 供应商表
+-- 12. 供应商表
 DROP TABLE IF EXISTS `base_supplier`;
 CREATE TABLE `base_supplier` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '供应商ID',
@@ -216,7 +237,7 @@ CREATE TABLE `base_supplier` (
     UNIQUE KEY `uk_sup_code` (`sup_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='供应商表';
 
--- 12. 客户表
+-- 13. 客户表
 DROP TABLE IF EXISTS `base_customer`;
 CREATE TABLE `base_customer` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '客户ID',
@@ -238,7 +259,7 @@ CREATE TABLE `base_customer` (
 -- 第三部分：核心业务模块
 -- =============================================
 
--- 13. 实时库存表
+-- 14. 实时库存表
 DROP TABLE IF EXISTS `stock_main`;
 CREATE TABLE `stock_main` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '库存ID',
@@ -256,7 +277,7 @@ CREATE TABLE `stock_main` (
     KEY `idx_batch_no` (`batch_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='实时库存表';
 
--- 14. 库存流水表
+-- 15. 库存流水表
 DROP TABLE IF EXISTS `stock_record`;
 CREATE TABLE `stock_record` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '流水ID',
@@ -280,7 +301,7 @@ CREATE TABLE `stock_record` (
     KEY `idx_create_time` (`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存流水表';
 
--- 15. 采购订单主表
+-- 16. 采购订单主表
 DROP TABLE IF EXISTS `bus_purchase_order`;
 CREATE TABLE `bus_purchase_order` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '采购订单ID',
@@ -303,7 +324,7 @@ CREATE TABLE `bus_purchase_order` (
     KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采购订单主表';
 
--- 16. 采购订单明细表
+-- 17. 采购订单明细表
 DROP TABLE IF EXISTS `bus_purchase_item`;
 CREATE TABLE `bus_purchase_item` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '明细ID',
@@ -321,7 +342,7 @@ CREATE TABLE `bus_purchase_item` (
     KEY `idx_sku_id` (`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='采购订单明细表';
 
--- 17. 销售订单主表
+-- 18. 销售订单主表
 DROP TABLE IF EXISTS `bus_sale_order`;
 CREATE TABLE `bus_sale_order` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '销售订单ID',
@@ -343,7 +364,7 @@ CREATE TABLE `bus_sale_order` (
     KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='销售订单主表';
 
--- 18. 销售订单明细表
+-- 19. 销售订单明细表
 DROP TABLE IF EXISTS `bus_sale_item`;
 CREATE TABLE `bus_sale_item` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '明细ID',
@@ -361,7 +382,7 @@ CREATE TABLE `bus_sale_item` (
     KEY `idx_sku_id` (`sku_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='销售订单明细表';
 
--- 19. 库存盘点主表
+-- 20. 库存盘点主表
 DROP TABLE IF EXISTS `bus_stock_check`;
 CREATE TABLE `bus_stock_check` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '盘点ID',
@@ -379,7 +400,7 @@ CREATE TABLE `bus_stock_check` (
     KEY `idx_warehouse_id` (`warehouse_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='库存盘点主表';
 
--- 20. 盘点明细表
+-- 21. 盘点明细表
 DROP TABLE IF EXISTS `bus_stock_check_item`;
 CREATE TABLE `bus_stock_check_item` (
     `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '盘点明细ID',
@@ -402,147 +423,139 @@ CREATE TABLE `bus_stock_check_item` (
 
 -- 初始化部门数据
 INSERT INTO `sys_dept` (`id`, `parent_id`, `dept_name`, `order_num`, `create_by`) VALUES
-(1, 0, '总公司', 1, 1),
-(2, 1, '研发部', 1, 1),
-(3, 1, '市场部', 2, 1),
-(4, 1, '采购部', 3, 1),
-(5, 1, '销售部', 4, 1),
-(6, 1, '仓储部', 5, 1),
-(7, 1, '财务部', 6, 1);
+(1, 0, 'Headquarters', 1, 1),
+(2, 1, 'R&D Dept', 1, 1),
+(3, 1, 'Marketing Dept', 2, 1),
+(4, 1, 'Purchasing Dept', 3, 1),
+(5, 1, 'Sales Dept', 4, 1),
+(6, 1, 'Warehouse Dept', 5, 1),
+(7, 1, 'Finance Dept', 6, 1);
 
 -- 初始化角色数据
 INSERT INTO `sys_role` (`id`, `role_name`, `role_key`, `data_scope`, `status`, `create_by`) VALUES
-(1, '超级管理员', 'admin', 1, 1, 1),
-(2, '采购经理', 'purchase_manager', 3, 1, 1),
-(3, '销售经理', 'sale_manager', 3, 1, 1),
-(4, '仓库管理员', 'warehouse_manager', 3, 1, 1),
-(5, '普通员工', 'employee', 5, 1, 1);
+(1, 'Administrator', 'admin', 1, 1, 1),
+(2, 'Purchase Manager', 'purchase_manager', 3, 1, 1),
+(3, 'Sales Manager', 'sale_manager', 3, 1, 1),
+(4, 'Warehouse Manager', 'warehouse_manager', 3, 1, 1),
+(5, 'Employee', 'employee', 5, 1, 1);
 
--- 初始化用户数据 (密码: 123456)
+-- 初始化用户数据 (password: 123456)
 INSERT INTO `sys_user` (`id`, `username`, `password`, `real_name`, `phone`, `email`, `dept_id`, `status`, `create_by`) VALUES
-(1, 'admin', '$2a$10$s/6K.oSU5QmSElA9YoRcneb.RhpBhmFMWOaFh1jtYg5e6NQkivm6K', '系统管理员', '13800138000', 'admin@example.com', 1, 1, 1);
+(1, 'admin', '$2a$10$s/6K.oSU5QmSElA9YoRcneb.RhpBhmFMWOaFh1jtYg5e6NQkivm6K', 'Admin', '13800138000', 'admin@example.com', 1, 1, 1);
 
 -- 初始化用户角色关联
 INSERT INTO `sys_user_role` (`user_id`, `role_id`) VALUES
 (1, 1);
 
 -- 初始化菜单数据
--- 一级菜单
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_name`, `path`, `component`, `perms`, `type`, `order_num`, `status`, `create_by`) VALUES
--- 系统管理
-(1, 0, '系统管理', '/system', NULL, NULL, 0, 1, 1, 1),
-(2, 1, '用户管理', '/system/user', 'system/user/index', 'system:user:list', 1, 1, 1, 1),
-(3, 1, '角色管理', '/system/role', 'system/role/index', 'system:role:list', 1, 2, 1, 1),
-(4, 1, '菜单管理', '/system/menu', 'system/menu/index', 'system:menu:list', 1, 3, 1, 1),
-(5, 1, '部门管理', '/system/dept', 'system/dept/index', 'system:dept:list', 1, 4, 1, 1),
-(6, 1, '操作日志', '/system/log', 'system/log/index', 'system:log:list', 1, 5, 1, 1),
+(1, 0, 'System', '/system', NULL, NULL, 0, 1, 1, 1),
+(2, 1, 'User Management', '/system/user', 'system/user/index', 'system:user:list', 1, 1, 1, 1),
+(3, 1, 'Role Management', '/system/role', 'system/role/index', 'system:role:list', 1, 2, 1, 1),
+(4, 1, 'Menu Management', '/system/menu', 'system/menu/index', 'system:menu:list', 1, 3, 1, 1),
+(5, 1, 'Dept Management', '/system/dept', 'system/dept/index', 'system:dept:list', 1, 4, 1, 1),
+(6, 1, 'Operation Log', '/system/log', 'system/log/index', 'system:log:list', 1, 5, 1, 1),
+(10, 0, 'Base Data', '/base', NULL, NULL, 0, 2, 1, 1),
+(11, 10, 'Product Management', '/base/product', 'base/product/index', 'base:product:list', 1, 1, 1, 1),
+(12, 10, 'Warehouse Management', '/base/warehouse', 'base/warehouse/index', 'base:warehouse:list', 1, 2, 1, 1),
+(13, 10, 'Supplier Management', '/base/supplier', 'base/supplier/index', 'base:supplier:list', 1, 3, 1, 1),
+(14, 10, 'Customer Management', '/base/customer', 'base/customer/index', 'base:customer:list', 1, 4, 1, 1),
+(20, 0, 'Purchase Management', '/purchase', NULL, NULL, 0, 3, 1, 1),
+(21, 20, 'Purchase Order', '/purchase/order', 'purchase/order/index', 'purchase:order:list', 1, 1, 1, 1),
+(22, 20, 'Purchase Inbound', '/purchase/inbound', 'purchase/inbound/index', 'purchase:inbound:list', 1, 2, 1, 1),
+(30, 0, 'Sales Management', '/sale', NULL, NULL, 0, 4, 1, 1),
+(31, 30, 'Sales Order', '/sale/order', 'sale/order/index', 'sale:order:list', 1, 1, 1, 1),
+(32, 30, 'Sales Outbound', '/sale/outbound', 'sale/outbound/index', 'sale:outbound:list', 1, 2, 1, 1),
+(40, 0, 'Inventory Management', '/stock', NULL, NULL, 0, 5, 1, 1),
+(41, 40, 'Real-time Inventory', '/stock/main', 'stock/main/index', 'stock:main:list', 1, 1, 1, 1),
+(42, 40, 'Inventory Record', '/stock/record', 'stock/record/index', 'stock:record:list', 1, 2, 1, 1),
+(43, 40, 'Inventory Check', '/stock/check', 'stock/check/index', 'stock:check:list', 1, 3, 1, 1),
+(44, 40, 'Inventory Transfer', '/stock/transfer', 'stock/transfer/index', 'stock:transfer:list', 1, 4, 1, 1),
+(50, 0, 'System Monitor', '/monitor', NULL, NULL, 0, 6, 1, 1),
+(51, 50, 'Online Users', '/monitor/online', 'monitor/online/index', 'monitor:online:list', 1, 1, 1, 1),
+(52, 50, 'Server Monitor', '/monitor/server', 'monitor/server/index', 'monitor:server:list', 1, 2, 1, 1),
+(53, 50, 'Cache Monitor', '/monitor/cache', 'monitor/cache/index', 'monitor:cache:list', 1, 3, 1, 1);
 
--- 基础档案
-(10, 0, '基础档案', '/base', NULL, NULL, 0, 2, 1, 1),
-(11, 10, '商品管理', '/base/product', 'base/product/index', 'base:product:list', 1, 1, 1, 1),
-(12, 10, '仓库管理', '/base/warehouse', 'base/warehouse/index', 'base:warehouse:list', 1, 2, 1, 1),
-(13, 10, '供应商管理', '/base/supplier', 'base/supplier/index', 'base:supplier:list', 1, 3, 1, 1),
-(14, 10, '客户管理', '/base/customer', 'base/customer/index', 'base:customer:list', 1, 4, 1, 1),
-
--- 采购管理
-(20, 0, '采购管理', '/purchase', NULL, NULL, 0, 3, 1, 1),
-(21, 20, '采购订单', '/purchase/order', 'purchase/order/index', 'purchase:order:list', 1, 1, 1, 1),
-(22, 20, '采购入库', '/purchase/inbound', 'purchase/inbound/index', 'purchase:inbound:list', 1, 2, 1, 1),
-
--- 销售管理
-(30, 0, '销售管理', '/sale', NULL, NULL, 0, 4, 1, 1),
-(31, 30, '销售订单', '/sale/order', 'sale/order/index', 'sale:order:list', 1, 1, 1, 1),
-(32, 30, '销售出库', '/sale/outbound', 'sale/outbound/index', 'sale:outbound:list', 1, 2, 1, 1),
-
--- 库存管理
-(40, 0, '库存管理', '/stock', NULL, NULL, 0, 5, 1, 1),
-(41, 40, '实时库存', '/stock/main', 'stock/main/index', 'stock:main:list', 1, 1, 1, 1),
-(42, 40, '库存流水', '/stock/record', 'stock/record/index', 'stock:record:list', 1, 2, 1, 1),
-(43, 40, '库存盘点', '/stock/check', 'stock/check/index', 'stock:check:list', 1, 3, 1, 1),
-(44, 40, '库存调拨', '/stock/transfer', 'stock/transfer/index', 'stock:transfer:list', 1, 4, 1, 1),
-
--- 系统监控
-(50, 0, '系统监控', '/monitor', NULL, NULL, 0, 6, 1, 1),
-(51, 50, '在线用户', '/monitor/online', 'monitor/online/index', 'monitor:online:list', 1, 1, 1, 1),
-(52, 50, '服务监控', '/monitor/server', 'monitor/server/index', 'monitor:server:list', 1, 2, 1, 1),
-(53, 50, '缓存监控', '/monitor/cache', 'monitor/cache/index', 'monitor:cache:list', 1, 3, 1, 1);
-
--- 二级菜单按钮权限
--- 用户管理按钮
+-- 初始化按钮权限
 INSERT INTO `sys_menu` (`id`, `parent_id`, `menu_name`, `path`, `component`, `perms`, `type`, `order_num`, `status`, `create_by`) VALUES
-(100, 2, '用户查询', NULL, NULL, 'system:user:query', 2, 1, 1, 1),
-(101, 2, '用户新增', NULL, NULL, 'system:user:add', 2, 2, 1, 1),
-(102, 2, '用户修改', NULL, NULL, 'system:user:edit', 2, 3, 1, 1),
-(103, 2, '用户删除', NULL, NULL, 'system:user:remove', 2, 4, 1, 1),
-(104, 2, '重置密码', NULL, NULL, 'system:user:resetPwd', 2, 5, 1, 1),
-(105, 2, '用户导出', NULL, NULL, 'system:user:export', 2, 6, 1, 1),
-
--- 角色管理按钮
-(110, 3, '角色查询', NULL, NULL, 'system:role:query', 2, 1, 1, 1),
-(111, 3, '角色新增', NULL, NULL, 'system:role:add', 2, 2, 1, 1),
-(112, 3, '角色修改', NULL, NULL, 'system:role:edit', 2, 3, 1, 1),
-(113, 3, '角色删除', NULL, NULL, 'system:role:remove', 2, 4, 1, 1),
-
--- 菜单管理按钮
-(120, 4, '菜单查询', NULL, NULL, 'system:menu:query', 2, 1, 1, 1),
-(121, 4, '菜单新增', NULL, NULL, 'system:menu:add', 2, 2, 1, 1),
-(122, 4, '菜单修改', NULL, NULL, 'system:menu:edit', 2, 3, 1, 1),
-(123, 4, '菜单删除', NULL, NULL, 'system:menu:remove', 2, 4, 1, 1),
-
--- 部门管理按钮
-(130, 5, '部门查询', NULL, NULL, 'system:dept:query', 2, 1, 1, 1),
-(131, 5, '部门新增', NULL, NULL, 'system:dept:add', 2, 2, 1, 1),
-(132, 5, '部门修改', NULL, NULL, 'system:dept:edit', 2, 3, 1, 1),
-(133, 5, '部门删除', NULL, NULL, 'system:dept:remove', 2, 4, 1, 1),
-
--- 商品管理按钮
-(140, 11, '商品查询', NULL, NULL, 'base:product:query', 2, 1, 1, 1),
-(141, 11, '商品新增', NULL, NULL, 'base:product:add', 2, 2, 1, 1),
-(142, 11, '商品修改', NULL, NULL, 'base:product:edit', 2, 3, 1, 1),
-(143, 11, '商品删除', NULL, NULL, 'base:product:remove', 2, 4, 1, 1),
-
--- 仓库管理按钮
-(150, 12, '仓库查询', NULL, NULL, 'base:warehouse:query', 2, 1, 1, 1),
-(151, 12, '仓库新增', NULL, NULL, 'base:warehouse:add', 2, 2, 1, 1),
-(152, 12, '仓库修改', NULL, NULL, 'base:warehouse:edit', 2, 3, 1, 1),
-(153, 12, '仓库删除', NULL, NULL, 'base:warehouse:remove', 2, 4, 1, 1),
-
--- 供应商管理按钮
-(160, 13, '供应商查询', NULL, NULL, 'base:supplier:query', 2, 1, 1, 1),
-(161, 13, '供应商新增', NULL, NULL, 'base:supplier:add', 2, 2, 1, 1),
-(162, 13, '供应商修改', NULL, NULL, 'base:supplier:edit', 2, 3, 1, 1),
-(163, 13, '供应商删除', NULL, NULL, 'base:supplier:remove', 2, 4, 1, 1),
-
--- 客户管理按钮
-(170, 14, '客户查询', NULL, NULL, 'base:customer:query', 2, 1, 1, 1),
-(171, 14, '客户新增', NULL, NULL, 'base:customer:add', 2, 2, 1, 1),
-(172, 14, '客户修改', NULL, NULL, 'base:customer:edit', 2, 3, 1, 1),
-(173, 14, '客户删除', NULL, NULL, 'base:customer:remove', 2, 4, 1, 1),
-
--- 采购订单按钮
-(180, 21, '采购订单查询', NULL, NULL, 'purchase:order:query', 2, 1, 1, 1),
-(181, 21, '采购订单新增', NULL, NULL, 'purchase:order:add', 2, 2, 1, 1),
-(182, 21, '采购订单修改', NULL, NULL, 'purchase:order:edit', 2, 3, 1, 1),
-(183, 21, '采购订单删除', NULL, NULL, 'purchase:order:remove', 2, 4, 1, 1),
-(184, 21, '采购订单审核', NULL, NULL, 'purchase:order:audit', 2, 5, 1, 1),
-
--- 销售订单按钮
-(190, 31, '销售订单查询', NULL, NULL, 'sale:order:query', 2, 1, 1, 1),
-(191, 31, '销售订单新增', NULL, NULL, 'sale:order:add', 2, 2, 1, 1),
-(192, 31, '销售订单修改', NULL, NULL, 'sale:order:edit', 2, 3, 1, 1),
-(193, 31, '销售订单删除', NULL, NULL, 'sale:order:remove', 2, 4, 1, 1),
-(194, 31, '销售订单审核', NULL, NULL, 'sale:order:audit', 2, 5, 1, 1),
-
--- 库存盘点按钮
-(200, 43, '盘点查询', NULL, NULL, 'stock:check:query', 2, 1, 1, 1),
-(201, 43, '盘点新增', NULL, NULL, 'stock:check:add', 2, 2, 1, 1),
-(202, 43, '盘点修改', NULL, NULL, 'stock:check:edit', 2, 3, 1, 1),
-(203, 43, '盘点删除', NULL, NULL, 'stock:check:remove', 2, 4, 1, 1),
-(204, 43, '盘点完成', NULL, NULL, 'stock:check:complete', 2, 5, 1, 1);
+(100, 2, 'User Query', NULL, NULL, 'system:user:query', 2, 1, 1, 1),
+(101, 2, 'User Add', NULL, NULL, 'system:user:add', 2, 2, 1, 1),
+(102, 2, 'User Edit', NULL, NULL, 'system:user:edit', 2, 3, 1, 1),
+(103, 2, 'User Delete', NULL, NULL, 'system:user:remove', 2, 4, 1, 1),
+(104, 2, 'Reset Password', NULL, NULL, 'system:user:resetPwd', 2, 5, 1, 1),
+(105, 2, 'User Export', NULL, NULL, 'system:user:export', 2, 6, 1, 1),
+(110, 3, 'Role Query', NULL, NULL, 'system:role:query', 2, 1, 1, 1),
+(111, 3, 'Role Add', NULL, NULL, 'system:role:add', 2, 2, 1, 1),
+(112, 3, 'Role Edit', NULL, NULL, 'system:role:edit', 2, 3, 1, 1),
+(113, 3, 'Role Delete', NULL, NULL, 'system:role:remove', 2, 4, 1, 1),
+(120, 4, 'Menu Query', NULL, NULL, 'system:menu:query', 2, 1, 1, 1),
+(121, 4, 'Menu Add', NULL, NULL, 'system:menu:add', 2, 2, 1, 1),
+(122, 4, 'Menu Edit', NULL, NULL, 'system:menu:edit', 2, 3, 1, 1),
+(123, 4, 'Menu Delete', NULL, NULL, 'system:menu:remove', 2, 4, 1, 1),
+(130, 5, 'Dept Query', NULL, NULL, 'system:dept:query', 2, 1, 1, 1),
+(131, 5, 'Dept Add', NULL, NULL, 'system:dept:add', 2, 2, 1, 1),
+(132, 5, 'Dept Edit', NULL, NULL, 'system:dept:edit', 2, 3, 1, 1),
+(133, 5, 'Dept Delete', NULL, NULL, 'system:dept:remove', 2, 4, 1, 1),
+(140, 11, 'Product Query', NULL, NULL, 'base:product:query', 2, 1, 1, 1),
+(141, 11, 'Product Add', NULL, NULL, 'base:product:add', 2, 2, 1, 1),
+(142, 11, 'Product Edit', NULL, NULL, 'base:product:edit', 2, 3, 1, 1),
+(143, 11, 'Product Delete', NULL, NULL, 'base:product:remove', 2, 4, 1, 1),
+(150, 12, 'Warehouse Query', NULL, NULL, 'base:warehouse:query', 2, 1, 1, 1),
+(151, 12, 'Warehouse Add', NULL, NULL, 'base:warehouse:add', 2, 2, 1, 1),
+(152, 12, 'Warehouse Edit', NULL, NULL, 'base:warehouse:edit', 2, 3, 1, 1),
+(153, 12, 'Warehouse Delete', NULL, NULL, 'base:warehouse:remove', 2, 4, 1, 1),
+(160, 13, 'Supplier Query', NULL, NULL, 'base:supplier:query', 2, 1, 1, 1),
+(161, 13, 'Supplier Add', NULL, NULL, 'base:supplier:add', 2, 2, 1, 1),
+(162, 13, 'Supplier Edit', NULL, NULL, 'base:supplier:edit', 2, 3, 1, 1),
+(163, 13, 'Supplier Delete', NULL, NULL, 'base:supplier:remove', 2, 4, 1, 1),
+(170, 14, 'Customer Query', NULL, NULL, 'base:customer:query', 2, 1, 1, 1),
+(171, 14, 'Customer Add', NULL, NULL, 'base:customer:add', 2, 2, 1, 1),
+(172, 14, 'Customer Edit', NULL, NULL, 'base:customer:edit', 2, 3, 1, 1),
+(173, 14, 'Customer Delete', NULL, NULL, 'base:customer:remove', 2, 4, 1, 1),
+(180, 21, 'Purchase Order Query', NULL, NULL, 'purchase:order:query', 2, 1, 1, 1),
+(181, 21, 'Purchase Order Add', NULL, NULL, 'purchase:order:add', 2, 2, 1, 1),
+(182, 21, 'Purchase Order Edit', NULL, NULL, 'purchase:order:edit', 2, 3, 1, 1),
+(183, 21, 'Purchase Order Delete', NULL, NULL, 'purchase:order:remove', 2, 4, 1, 1),
+(184, 21, 'Purchase Order Audit', NULL, NULL, 'purchase:order:audit', 2, 5, 1, 1),
+(190, 31, 'Sales Order Query', NULL, NULL, 'sale:order:query', 2, 1, 1, 1),
+(191, 31, 'Sales Order Add', NULL, NULL, 'sale:order:add', 2, 2, 1, 1),
+(192, 31, 'Sales Order Edit', NULL, NULL, 'sale:order:edit', 2, 3, 1, 1),
+(193, 31, 'Sales Order Delete', NULL, NULL, 'sale:order:remove', 2, 4, 1, 1),
+(194, 31, 'Sales Order Audit', NULL, NULL, 'sale:order:audit', 2, 5, 1, 1),
+(200, 43, 'Check Query', NULL, NULL, 'stock:check:query', 2, 1, 1, 1),
+(201, 43, 'Check Add', NULL, NULL, 'stock:check:add', 2, 2, 1, 1),
+(202, 43, 'Check Edit', NULL, NULL, 'stock:check:edit', 2, 3, 1, 1),
+(203, 43, 'Check Delete', NULL, NULL, 'stock:check:remove', 2, 4, 1, 1),
+(204, 43, 'Check Complete', NULL, NULL, 'stock:check:complete', 2, 5, 1, 1);
 
 -- 初始化角色菜单关联 (管理员拥有所有权限)
 INSERT INTO `sys_role_menu` (`role_id`, `menu_id`)
 SELECT 1, id FROM `sys_menu`;
+
+-- 初始化商品分类
+INSERT INTO `base_category` (`id`, `parent_id`, `category_name`, `order_num`, `status`, `create_by`) VALUES
+(1, 0, 'Electronics', 1, 1, 1),
+(2, 0, 'Clothing', 2, 1, 1),
+(3, 0, 'Food', 3, 1, 1),
+(4, 1, 'Mobile Phones', 1, 1, 1),
+(5, 1, 'Computers', 2, 1, 1),
+(6, 2, 'Mens Wear', 1, 1, 1),
+(7, 2, 'Womens Wear', 2, 1, 1);
+
+-- 初始化仓库
+INSERT INTO `base_warehouse` (`id`, `wh_code`, `wh_name`, `address`, `principal`, `status`, `create_by`) VALUES
+(1, 'WH001', 'Main Warehouse', '123 Main Street', 'John Doe', 1, 1),
+(2, 'WH002', 'Branch Warehouse', '456 Branch Avenue', 'Jane Smith', 1, 1);
+
+-- 初始化供应商
+INSERT INTO `base_supplier` (`id`, `sup_code`, `sup_name`, `contact_person`, `phone`, `address`, `create_by`) VALUES
+(1, 'SUP001', 'Tech Supplier Co.', 'Mike Johnson', '13900001111', '789 Tech Park', 1),
+(2, 'SUP002', 'Global Trade Ltd.', 'Sarah Wilson', '13900002222', '101 Trade Center', 1);
+
+-- 初始化客户
+INSERT INTO `base_customer` (`id`, `cust_code`, `cust_name`, `contact_person`, `phone`, `address`, `create_by`) VALUES
+(1, 'CUST001', 'Big Mart Inc.', 'Tom Brown', '13800001111', '202 Retail Street', 1),
+(2, 'CUST002', 'Online Store Ltd.', 'Lisa Davis', '13800002222', '303 Commerce Ave', 1);
 
 -- =============================================
 -- 脚本执行完成
