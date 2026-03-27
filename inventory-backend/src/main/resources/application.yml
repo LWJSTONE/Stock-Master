@@ -1,0 +1,182 @@
+# ============================================================
+# Spring Boot 主配置文件
+# Inventory Management System V2.0.0
+# ============================================================
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    accept-count: 100
+    min-spare-threads: 10
+    connection-timeout: 5000ms
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: inventory-backend
+
+  profiles:
+    active: druid
+
+  # 数据源配置（由application-druid.yml管理）
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:mysql://localhost:3306/inventory_v2?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+
+  # 主类配置
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+  # Jackson JSON配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 50MB
+
+  # 静态资源配置
+  resources:
+    static-locations: classpath:/static/,file:${file.upload.path}
+
+# ============================================================
+# MyBatis-Plus 配置
+# ============================================================
+mybatis-plus:
+  # Mapper XML文件位置
+  mapper-locations: classpath*:mapper/**/*.xml
+  # 实体类扫描路径
+  type-aliases-package: com.graduation.inventory.*.entity
+  # 配置
+  configuration:
+    # 开启驼峰命名转换
+    map-underscore-to-camel-case: true
+    # 日志输出
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 二级缓存
+    cache-enabled: false
+    # 懒加载
+    lazy-loading-enabled: true
+  # 全局配置
+  global-config:
+    # 数据库配置
+    db-config:
+      # 主键类型 AUTO-自增 INPUT-用户输入 ID_WORKER-全局唯一ID UUID-UUID
+      id-type: AUTO
+      # 逻辑删除字段
+      logic-delete-field: deleted
+      # 逻辑删除值
+      logic-delete-value: 1
+      # 逻辑未删除值
+      logic-not-delete-value: 0
+      # 字段策略
+      insert-strategy: not_null
+      update-strategy: not_null
+    # 关闭Banner
+    banner: false
+
+# ============================================================
+# JWT 配置
+# ============================================================
+jwt:
+  # 密钥（生产环境请使用环境变量）
+  secret: ${JWT_SECRET:inventory-management-system-jwt-secret-key-2024}
+  # 过期时间（单位：毫秒）默认24小时
+  expiration: ${JWT_EXPIRATION:86400000}
+  # Token前缀
+  token-prefix: Bearer
+  # Token请求头名称
+  header: Authorization
+  # Token前缀
+  token-head: Bearer
+
+# ============================================================
+# 文件上传配置
+# ============================================================
+file:
+  upload:
+    # 文件上传路径
+    path: ${FILE_UPLOAD_PATH:/home/z/my-project/inventory-backend/uploads}
+    # 允许的文件类型
+    allowed-types: jpg,jpeg,png,gif,bmp,webp,pdf,doc,docx,xls,xlsx,csv
+    # 图片文件类型
+    image-types: jpg,jpeg,png,gif,bmp,webp
+    # 文档文件类型
+    document-types: pdf,doc,docx,xls,xlsx,csv
+    # Excel导出临时目录
+    excel-temp-path: ${FILE_UPLOAD_PATH:/home/z/my-project/inventory-backend/uploads}/temp/excel
+
+# ============================================================
+# Caffeine 缓存配置
+# ============================================================
+caffeine:
+  cache:
+    # 初始容量
+    initial-capacity: 100
+    # 最大容量
+    maximum-size: 1000
+    # 过期时间（单位：秒）默认1小时
+    expire-after-write: 3600
+    # 刷新时间（单位：秒）
+    refresh-after-write: 1800
+
+# ============================================================
+# Knife4j API文档配置
+# ============================================================
+knife4j:
+  # 是否开启增强模式
+  enable: true
+  # 是否开启生产环境保护
+  production: false
+  # 基础认证
+  basic:
+    enable: false
+    username: admin
+    password: admin123
+
+# Swagger配置
+springfox:
+  documentation:
+    enabled: true
+    swagger-ui:
+      enabled: true
+
+# ============================================================
+# 日志配置
+# ============================================================
+logging:
+  level:
+    root: INFO
+    com.graduation.inventory: DEBUG
+    com.graduation.inventory.mapper: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+  file:
+    name: logs/inventory.log
+    max-size: 10MB
+    max-history: 30

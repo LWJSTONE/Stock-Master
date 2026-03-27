@@ -1,0 +1,10 @@
+// API 统一导出
+export * from './user'
+export * from './warehouse'
+export * from './supplier'
+export * from './customer'
+export * from './product'
+export * from './inventory'
+export * from './inbound'
+export * from './outbound'
+export * from './dashboard'

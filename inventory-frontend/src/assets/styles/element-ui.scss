@@ -1,0 +1,80 @@
+// Element UI 样式覆盖
+
+// 表格样式
+.el-table {
+  th {
+    background-color: #f5f7fa !important;
+  }
+  
+  .el-table__cell {
+    padding: 12px 0;
+  }
+}
+
+// 表单样式
+.el-form {
+  .el-form-item__label {
+    font-weight: normal;
+  }
+}
+
+// 对话框样式
+.el-dialog {
+  .el-dialog__header {
+    border-bottom: 1px solid #eee;
+  }
+  
+  .el-dialog__footer {
+    border-top: 1px solid #eee;
+  }
+}
+
+// 分页样式
+.el-pagination {
+  margin-top: 20px;
+  text-align: right;
+}
+
+// 消息提示样式
+.el-message {
+  min-width: 200px;
+}
+
+// 卡片样式
+.el-card {
+  border-radius: 4px;
+  
+  .el-card__header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #ebeef5;
+  }
+}
+
+// 按钮组样式
+.el-button-group {
+  .el-button {
+    margin: 0;
+  }
+}
+
+// 输入框样式
+.el-input {
+  .el-input__inner {
+    height: 36px;
+    line-height: 36px;
+  }
+}
+
+// 选择器样式
+.el-select {
+  .el-input__inner {
+    height: 36px;
+  }
+}
+
+// 日期选择器样式
+.el-date-editor {
+  .el-input__inner {
+    height: 36px;
+  }
+}

@@ -1,0 +1,171 @@
+# ============================================================
+# Git Ignore Configuration for Inventory Backend
+# ============================================================
+
+# ============================================================
+# IDE Configuration
+# ============================================================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.settings/
+.classpath
+.project
+.metadata/
+bin/
+tmp/
+
+# VS Code
+.vscode/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ============================================================
+# Java Build
+# ============================================================
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ============================================================
+# Spring Boot
+# ============================================================
+
+# Application logs
+logs/
+*.log
+*.log.*
+
+# Upload directory
+uploads/
+uploads/*
+
+# Temporary files
+temp/
+tmp/
+
+# ============================================================
+# Database
+# ============================================================
+
+# H2 database files
+*.h2.db
+*.trace.db
+
+# ============================================================
+# OS Generated Files
+# ============================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ============================================================
+# Sensitive Files
+# ============================================================
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Secrets
+*.pem
+*.key
+*.p12
+*.jks
+
+# Configuration files with sensitive data
+application-local.yml
+application-prod.yml
+application-prod.properties
+
+# ============================================================
+# Test Coverage
+# ============================================================
+
+# JaCoCo
+jacoco.exec
+*.exec
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# ============================================================
+# Documentation
+# ============================================================
+
+# Generated javadoc
+docs/apidocs/
+javadoc/
+
+# ============================================================
+# Misc
+# ============================================================
+
+# Backup files
+*.bak
+*.swp
+*.swo
+*~
+
+# Lock files
+*.lock
+*.pid
+
+# Node modules (if any frontend tools)
+node_modules/
