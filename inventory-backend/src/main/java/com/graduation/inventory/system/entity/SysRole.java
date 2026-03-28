@@ -1,6 +1,7 @@
 package com.graduation.inventory.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.graduation.inventory.common.domain.BaseEntity;
 import lombok.Data;
@@ -46,6 +47,7 @@ public class SysRole extends BaseEntity {
     /**
      * 删除标志（0存在 1删除）
      */
+    @TableLogic(value = "0", delval = "1")
     @TableField("del_flag")
     private String delFlag;
 }

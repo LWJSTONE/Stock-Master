@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function getOverview() {
   return request({
-    url: '/api/dashboard/overview',
+    url: '/api/monitor/dashboard/overview',
     method: 'get'
   })
 }
@@ -19,7 +19,7 @@ export function getOverview() {
  */
 export function getTrend(params) {
   return request({
-    url: '/api/dashboard/trend',
+    url: '/api/monitor/dashboard/trend',
     method: 'get',
     params
   })
@@ -31,7 +31,7 @@ export function getTrend(params) {
  */
 export function getCategoryRatio() {
   return request({
-    url: '/api/dashboard/category-ratio',
+    url: '/api/monitor/dashboard/category',
     method: 'get'
   })
 }
@@ -39,13 +39,11 @@ export function getCategoryRatio() {
 /**
  * 获取库存预警列表
  * @param {Object} params - 查询参数
- * @param {number} params.pageNum - 页码
- * @param {number} params.pageSize - 每页数量
  * @returns {Promise} 包含低于安全库存的商品列表
  */
 export function getWarningList(params) {
   return request({
-    url: '/api/dashboard/warning-list',
+    url: '/api/monitor/dashboard/warning',
     method: 'get',
     params
   })
@@ -59,19 +57,8 @@ export function getWarningList(params) {
  */
 export function getTopProducts(params) {
   return request({
-    url: '/api/dashboard/top-products',
+    url: '/api/monitor/dashboard/topProducts',
     method: 'get',
     params
-  })
-}
-
-/**
- * 获取实时统计数据（用于自动刷新）
- * @returns {Promise} 包含最新统计数据
- */
-export function getRealTimeData() {
-  return request({
-    url: '/api/dashboard/realtime',
-    method: 'get'
   })
 }

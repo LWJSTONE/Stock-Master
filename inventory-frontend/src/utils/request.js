@@ -32,7 +32,7 @@ service.interceptors.response.use(
     // 如果自定义代码不是 200，则判断为错误
     if (res.code !== 200) {
       Message({
-        message: res.message || 'Error',
+        message: res.msg || res.message || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
@@ -50,7 +50,7 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(new Error(res.msg || res.message || 'Error'))
     } else {
       return res
     }

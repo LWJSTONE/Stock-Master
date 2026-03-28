@@ -1,6 +1,7 @@
 package com.graduation.inventory.business.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.graduation.inventory.common.domain.BaseEntity;
 import lombok.Data;
@@ -69,4 +70,11 @@ public class BusPurchaseOrder extends BaseEntity {
      */
     @TableField("remark")
     private String remark;
+
+    /**
+     * 删除标志(0未删除 1已删除)
+     */
+    @TableLogic(value = "0", delval = "1")
+    @TableField("is_deleted")
+    private Integer isDeleted;
 }

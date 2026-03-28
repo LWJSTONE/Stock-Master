@@ -131,6 +131,7 @@ CREATE INDEX IF NOT EXISTS idx_oper_time ON sys_oper_log(oper_time);
 CREATE TABLE IF NOT EXISTS base_category (
     id BIGINT NOT NULL AUTO_INCREMENT COMMENT '分类ID',
     parent_id BIGINT DEFAULT 0 COMMENT '父分类ID',
+    category_code VARCHAR(50) DEFAULT NULL COMMENT '分类编码',
     category_name VARCHAR(50) NOT NULL COMMENT '分类名称',
     order_num INT DEFAULT 0 COMMENT '显示顺序',
     status TINYINT DEFAULT 1 COMMENT '状态(0禁用 1启用)',

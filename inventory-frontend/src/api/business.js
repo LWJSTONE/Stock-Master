@@ -46,27 +46,29 @@ export function deletePurchase(id) {
 }
 
 // 审核采购订单
-export function auditPurchase(id) {
+export function auditPurchase(data) {
   return request({
-    url: `/api/business/purchase/${id}/audit`,
-    method: 'post'
+    url: '/api/business/purchase/audit',
+    method: 'put',
+    data
   })
 }
 
 // 取消采购订单
-export function cancelPurchase(id) {
+export function cancelPurchase(purchaseId) {
   return request({
-    url: `/api/business/purchase/${id}/cancel`,
-    method: 'post'
+    url: '/api/business/purchase/cancel',
+    method: 'put',
+    params: { purchaseId }
   })
 }
 
 // 采购入库
-export function purchaseInbound(id, data) {
+export function purchaseInbound(purchaseId, warehouseId) {
   return request({
-    url: `/api/business/purchase/${id}/inbound`,
-    method: 'post',
-    data
+    url: '/api/business/purchase/instock',
+    method: 'put',
+    params: { purchaseId, warehouseId }
   })
 }
 
@@ -116,114 +118,28 @@ export function deleteSale(id) {
 }
 
 // 审核销售订单
-export function auditSale(id) {
+export function auditSale(data) {
   return request({
-    url: `/api/business/sale/${id}/audit`,
-    method: 'post'
+    url: '/api/business/sale/audit',
+    method: 'put',
+    data
   })
 }
 
 // 取消销售订单
-export function cancelSale(id) {
+export function cancelSale(saleId) {
   return request({
-    url: `/api/business/sale/${id}/cancel`,
-    method: 'post'
+    url: '/api/business/sale/cancel',
+    method: 'put',
+    params: { saleId }
   })
 }
 
 // 销售出库
-export function saleOutbound(id, data) {
+export function saleOutbound(saleId) {
   return request({
-    url: `/api/business/sale/${id}/outbound`,
-    method: 'post',
-    data
-  })
-}
-
-// ==================== 入库管理API ====================
-
-// 获取入库单列表
-export function getInboundList(params) {
-  return request({
-    url: '/api/business/inbound/list',
-    method: 'get',
-    params
-  })
-}
-
-// 获取入库单详情
-export function getInboundDetail(id) {
-  return request({
-    url: `/api/business/inbound/${id}`,
-    method: 'get'
-  })
-}
-
-// 创建入库单
-export function createInbound(data) {
-  return request({
-    url: '/api/business/inbound',
-    method: 'post',
-    data
-  })
-}
-
-// 审核入库单
-export function auditInbound(id) {
-  return request({
-    url: `/api/business/inbound/${id}/audit`,
-    method: 'post'
-  })
-}
-
-// 删除入库单
-export function deleteInbound(id) {
-  return request({
-    url: `/api/business/inbound/${id}`,
-    method: 'delete'
-  })
-}
-
-// ==================== 出库管理API ====================
-
-// 获取出库单列表
-export function getOutboundList(params) {
-  return request({
-    url: '/api/business/outbound/list',
-    method: 'get',
-    params
-  })
-}
-
-// 获取出库单详情
-export function getOutboundDetail(id) {
-  return request({
-    url: `/api/business/outbound/${id}`,
-    method: 'get'
-  })
-}
-
-// 创建出库单
-export function createOutbound(data) {
-  return request({
-    url: '/api/business/outbound',
-    method: 'post',
-    data
-  })
-}
-
-// 审核出库单
-export function auditOutbound(id) {
-  return request({
-    url: `/api/business/outbound/${id}/audit`,
-    method: 'post'
-  })
-}
-
-// 删除出库单
-export function deleteOutbound(id) {
-  return request({
-    url: `/api/business/outbound/${id}`,
-    method: 'delete'
+    url: '/api/business/sale/outstock',
+    method: 'put',
+    params: { saleId }
   })
 }

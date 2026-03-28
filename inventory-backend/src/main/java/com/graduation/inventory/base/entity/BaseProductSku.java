@@ -1,6 +1,7 @@
 package com.graduation.inventory.base.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.graduation.inventory.common.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
@@ -82,6 +83,7 @@ public class BaseProductSku extends BaseEntity {
      * 删除标志(0未删除 1已删除)
      */
     @ApiModelProperty(value = "删除标志", hidden = true)
+    @TableLogic(value = "0", delval = "1")
     @TableField("is_deleted")
     private Integer isDeleted;
 }
