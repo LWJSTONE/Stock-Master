@@ -200,6 +200,26 @@ const createRouter = () => new VueRouter({
 
 const router = createRouter()
 
+// 解决Vue Router导航重复错误
+const originalPush = VueRouter.prototype.push
+const originalReplace = VueRouter.prototype.replace
+
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => {
+    if (err.name !== 'NavigationDuplicated' && !err.message.includes('Redirected')) {
+      return Promise.reject(err)
+    }
+  })
+}
+
+VueRouter.prototype.replace = function replace(location) {
+  return originalReplace.call(this, location).catch(err => {
+    if (err.name !== 'NavigationDuplicated' && !err.message.includes('Redirected')) {
+      return Promise.reject(err)
+    }
+  })
+}
+
 // 重置路由
 export function resetRouter() {
   const newRouter = createRouter()

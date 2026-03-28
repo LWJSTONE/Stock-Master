@@ -55,14 +55,12 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+      if (!value || value.trim() === '') {
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
@@ -76,8 +74,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111',
+        username: '',
+        password: '',
         rememberMe: false
       },
       loginRules: {
@@ -90,6 +88,11 @@ export default {
   },
   created() {
     this.getRememberedPassword()
+  },
+  computed: {
+    redirect() {
+      return this.$route.query.redirect || '/'
+    }
   },
   methods: {
     showPwd() {

@@ -42,7 +42,8 @@ router.beforeEach(async(to, from, next) => {
         } catch (error) {
           // 获取用户信息失败，移除token并跳转登录页
           await store.dispatch('user/resetToken')
-          Message.error(error || 'Has Error')
+          // 不显示错误消息，静默重定向到登录页
+          // Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           // NProgress.done()
         }
