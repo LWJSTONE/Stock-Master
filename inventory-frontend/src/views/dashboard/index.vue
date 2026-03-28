@@ -237,8 +237,16 @@ export default {
     async fetchOverview() {
       try {
         const res = await getOverview()
-        if (res.data) {
-          this.overview = res.data
+        console.log('Dashboard overview response:', res)
+        if (res && res.data) {
+          // 合并数据而不是替换，保留默认值
+          this.overview = {
+            ...this.overview,
+            ...res.data
+          }
+          console.log('Overview data updated:', this.overview)
+        } else {
+          console.warn('Dashboard overview response has no data:', res)
         }
       } catch (error) {
         console.error('获取概览数据失败:', error)

@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth'
 // 创建 axios 实例
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
-  timeout: 10000
+  timeout: 30000
 })
 
 // 请求拦截器
@@ -16,10 +16,11 @@ service.interceptors.request.use(
     if (store.getters.token) {
       config.headers['Authorization'] = 'Bearer ' + getToken()
     }
+    console.log('API Request:', config.method?.toUpperCase(), config.url, config.params || config.data)
     return config
   },
   error => {
-    console.log(error)
+    console.log('Request error:', error)
     return Promise.reject(error)
   }
 )
@@ -28,6 +29,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
+    console.log('API Response:', response.config.url, 'status:', response.status, 'data:', res)
 
     // 如果自定义代码不是 200，则判断为错误
     if (res.code !== 200) {
@@ -56,7 +58,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error)
+    console.log('Response error:', error.message, error.response)
     Message({
       message: error.message,
       type: 'error',

@@ -405,13 +405,14 @@ export default {
             skuIds: this.selectedSkuIds,
             remark: this.createForm.remark
           }
+          console.log('Creating stock check with data:', data)
           await createCheck(data)
           this.$message.success('创建成功')
           this.createVisible = false
           this.getList()
         } catch (error) {
-          console.error(error)
-          this.$message.error('创建失败，请稍后重试')
+          console.error('创建盘点单失败:', error)
+          this.$message.error('创建失败：' + (error.message || '请稍后重试'))
         } finally {
           this.createLoading = false
         }
