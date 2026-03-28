@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 库存盘点主表实体类
@@ -35,6 +36,30 @@ public class BusStockCheck extends BaseEntity {
     private Long warehouseId;
 
     /**
+     * 仓库名称（非数据库字段，用于前端显示）
+     */
+    @TableField(exist = false)
+    private String warehouseName;
+
+    /**
+     * 盘点商品数量
+     */
+    @TableField(exist = false)
+    private Integer productCount;
+
+    /**
+     * 差异数量
+     */
+    @TableField(exist = false)
+    private Integer differenceCount;
+
+    /**
+     * 差异金额
+     */
+    @TableField(exist = false)
+    private java.math.BigDecimal differenceAmount;
+
+    /**
      * 盘点状态（0盘点中 1完成）
      */
     @TableField("check_status")
@@ -45,6 +70,12 @@ public class BusStockCheck extends BaseEntity {
      */
     @TableField("check_time")
     private Date checkTime;
+
+    /**
+     * 盘点明细列表（非数据库字段）
+     */
+    @TableField(exist = false)
+    private List<BusStockCheckItem> items;
 
     /**
      * 删除标志(0未删除 1已删除)

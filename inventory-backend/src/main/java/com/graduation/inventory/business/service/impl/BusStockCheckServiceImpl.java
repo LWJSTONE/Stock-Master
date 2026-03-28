@@ -3,6 +3,10 @@ package com.graduation.inventory.business.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.graduation.inventory.base.entity.BaseProductSku;
+import com.graduation.inventory.base.entity.BaseWarehouse;
+import com.graduation.inventory.base.mapper.BaseProductSkuMapper;
+import com.graduation.inventory.base.mapper.BaseWarehouseMapper;
 import com.graduation.inventory.business.entity.BusStockCheck;
 import com.graduation.inventory.business.entity.BusStockCheckItem;
 import com.graduation.inventory.business.entity.StockMain;
@@ -18,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +38,8 @@ public class BusStockCheckServiceImpl extends ServiceImpl<BusStockCheckMapper, B
 
     private final BusStockCheckItemMapper checkItemMapper;
     private final StockMainMapper stockMainMapper;
+    private final BaseWarehouseMapper warehouseMapper;
+    private final BaseProductSkuMapper skuMapper;
 
     @Override
     public Page<BusStockCheck> selectCheckPage(Page<BusStockCheck> page, String checkNo, Long warehouseId, Integer checkStatus) {
@@ -41,17 +48,88 @@ public class BusStockCheckServiceImpl extends ServiceImpl<BusStockCheckMapper, B
         wrapper.eq(warehouseId != null, BusStockCheck::getWarehouseId, warehouseId);
         wrapper.eq(checkStatus != null, BusStockCheck::getCheckStatus, checkStatus);
         wrapper.orderByDesc(BusStockCheck::getCreateTime);
-        return baseMapper.selectPage(page, wrapper);
+        Page<BusStockCheck> result = baseMapper.selectPage(page, wrapper);
+        
+        // 填充仓库名称和统计信息
+        for (BusStockCheck check : result.getRecords()) {
+            fillCheckInfo(check);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 填充盘点单信息（仓库名称、商品数量、差异数量）
+     */
+    private void fillCheckInfo(BusStockCheck check) {
+        // 填充仓库名称
+        if (check.getWarehouseId() != null) {
+            BaseWarehouse warehouse = warehouseMapper.selectById(check.getWarehouseId());
+            if (warehouse != null) {
+                check.setWarehouseName(warehouse.getWhName());
+            }
+        }
+        
+        // 查询盘点明细统计
+        if (check.getId() != null) {
+            LambdaQueryWrapper<BusStockCheckItem> itemWrapper = new LambdaQueryWrapper<>();
+            itemWrapper.eq(BusStockCheckItem::getCheckId, check.getId());
+            List<BusStockCheckItem> items = checkItemMapper.selectList(itemWrapper);
+            
+            // 填充SKU信息
+            for (BusStockCheckItem item : items) {
+                fillItemSkuInfo(item);
+            }
+            
+            check.setProductCount(items.size());
+            check.setItems(items);
+            
+            // 计算差异数量和金额
+            int diffCount = 0;
+            BigDecimal diffAmount = BigDecimal.ZERO;
+            for (BusStockCheckItem item : items) {
+                if (item.getDiffQty() != null) {
+                    diffCount += item.getDiffQty().intValue();
+                }
+            }
+            check.setDifferenceCount(diffCount);
+            check.setDifferenceAmount(diffAmount);
+        }
+    }
+    
+    /**
+     * 填充盘点明细的SKU信息
+     */
+    private void fillItemSkuInfo(BusStockCheckItem item) {
+        if (item.getSkuId() != null) {
+            BaseProductSku sku = skuMapper.selectById(item.getSkuId());
+            if (sku != null) {
+                item.setSkuCode(sku.getSkuCode());
+                item.setSkuName(sku.getSkuName());
+                item.setSpecValues(sku.getSpecInfo());
+                item.setPrice(sku.getSalePrice());
+            }
+        }
     }
 
     @Override
     public BusStockCheck selectCheckById(Long checkId) {
         BusStockCheck check = baseMapper.selectById(checkId);
         if (check != null) {
-            // 查询明细
+            // 查询明细并设置到check对象
             LambdaQueryWrapper<BusStockCheckItem> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(BusStockCheckItem::getCheckId, checkId);
             List<BusStockCheckItem> items = checkItemMapper.selectList(wrapper);
+            
+            // 填充SKU信息
+            for (BusStockCheckItem item : items) {
+                fillItemSkuInfo(item);
+            }
+            
+            check.setItems(items != null ? items : new ArrayList<>());
+            
+            // 填充仓库名称
+            fillCheckInfo(check);
         }
         return check;
     }
@@ -99,21 +177,45 @@ public class BusStockCheckServiceImpl extends ServiceImpl<BusStockCheckMapper, B
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean submitActualQty(StockCheckDto dto) {
-        BusStockCheckItem item = checkItemMapper.selectById(dto.getItemId());
-        if (item == null) {
-            throw new ServiceException("盘点明细不存在");
+        // 批量更新盘点明细
+        if (dto.getItems() != null && !dto.getItems().isEmpty()) {
+            for (BusStockCheckItem item : dto.getItems()) {
+                BusStockCheckItem existItem = checkItemMapper.selectById(item.getId());
+                if (existItem == null) {
+                    continue;
+                }
+                
+                BusStockCheck check = baseMapper.selectById(existItem.getCheckId());
+                if (check.getCheckStatus() != 0) {
+                    throw new ServiceException("盘点已完成，不能再提交");
+                }
+                
+                existItem.setActualQty(item.getActualQty());
+                existItem.setDiffQty(item.getActualQty().subtract(existItem.getSystemQty()));
+                existItem.setUpdateTime(new Date());
+                checkItemMapper.updateById(existItem);
+            }
+            return true;
         }
         
-        BusStockCheck check = baseMapper.selectById(item.getCheckId());
-        if (check.getCheckStatus() != 0) {
-            throw new ServiceException("盘点已完成，不能再提交");
+        // 单个更新
+        if (dto.getItemId() != null) {
+            BusStockCheckItem item = checkItemMapper.selectById(dto.getItemId());
+            if (item == null) {
+                throw new ServiceException("盘点明细不存在");
+            }
+            
+            BusStockCheck check = baseMapper.selectById(item.getCheckId());
+            if (check.getCheckStatus() != 0) {
+                throw new ServiceException("盘点已完成，不能再提交");
+            }
+            
+            item.setActualQty(dto.getActualQty());
+            item.setDiffQty(dto.getActualQty().subtract(item.getSystemQty()));
+            item.setRemark(dto.getRemark());
+            item.setUpdateTime(new Date());
+            checkItemMapper.updateById(item);
         }
-        
-        item.setActualQty(dto.getActualQty());
-        item.setDiffQty(dto.getActualQty().subtract(item.getSystemQty()));
-        item.setRemark(dto.getRemark());
-        item.setUpdateTime(new Date());
-        checkItemMapper.updateById(item);
         
         return true;
     }
@@ -129,7 +231,33 @@ public class BusStockCheckServiceImpl extends ServiceImpl<BusStockCheckMapper, B
             throw new ServiceException("盘点已完成");
         }
         
-        // TODO: 根据盘点结果调整库存
+        // 检查是否已录入实盘数量
+        LambdaQueryWrapper<BusStockCheckItem> itemWrapper = new LambdaQueryWrapper<>();
+        itemWrapper.eq(BusStockCheckItem::getCheckId, checkId);
+        List<BusStockCheckItem> items = checkItemMapper.selectList(itemWrapper);
+        for (BusStockCheckItem item : items) {
+            if (item.getActualQty() == null) {
+                throw new ServiceException("请先录入所有商品的实盘数量");
+            }
+        }
+        
+        // 根据盘点结果调整库存
+        for (BusStockCheckItem item : items) {
+            if (item.getDiffQty() != null && item.getDiffQty().compareTo(BigDecimal.ZERO) != 0) {
+                // 查询当前库存
+                LambdaQueryWrapper<StockMain> stockWrapper = new LambdaQueryWrapper<>();
+                stockWrapper.eq(StockMain::getWarehouseId, check.getWarehouseId());
+                stockWrapper.eq(StockMain::getSkuId, item.getSkuId());
+                StockMain stockMain = stockMainMapper.selectOne(stockWrapper);
+                
+                if (stockMain != null) {
+                    // 调整库存
+                    stockMain.setQuantity(item.getActualQty());
+                    stockMain.setUpdateTime(new Date());
+                    stockMainMapper.updateById(stockMain);
+                }
+            }
+        }
         
         check.setCheckStatus(1); // 完成
         check.setCheckTime(new Date());

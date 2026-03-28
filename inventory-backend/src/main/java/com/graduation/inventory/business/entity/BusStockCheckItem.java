@@ -40,6 +40,36 @@ public class BusStockCheckItem implements Serializable {
     private Long skuId;
 
     /**
+     * SKU编码（非数据库字段，用于前端显示）
+     */
+    @TableField(exist = false)
+    private String skuCode;
+
+    /**
+     * SKU名称（非数据库字段，用于前端显示）
+     */
+    @TableField(exist = false)
+    private String skuName;
+
+    /**
+     * 规格信息（非数据库字段，用于前端显示）
+     */
+    @TableField(exist = false)
+    private String specValues;
+
+    /**
+     * 单位（非数据库字段，用于前端显示）
+     */
+    @TableField(exist = false)
+    private String unit;
+
+    /**
+     * 单价（非数据库字段，用于前端显示）
+     */
+    @TableField(exist = false)
+    private BigDecimal price;
+
+    /**
      * 系统数量
      */
     @TableField("system_qty")

@@ -44,7 +44,13 @@ export function getCheckList(params) {
   return request({
     url: '/api/stock/check/list',
     method: 'get',
-    params
+    params: {
+      pageNum: params.page || params.pageNum,
+      pageSize: params.pageSize,
+      checkNo: params.checkNo,
+      warehouseId: params.warehouseId,
+      checkStatus: params.checkStatus || params.status
+    }
   })
 }
 

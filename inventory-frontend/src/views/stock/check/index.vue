@@ -20,12 +20,12 @@
         <el-option
           v-for="item in warehouseOptions"
           :key="item.id"
-          :label="item.name"
+          :label="item.whName"
           :value="item.id"
         />
       </el-select>
       <el-select
-        v-model="listQuery.status"
+        v-model="listQuery.checkStatus"
         placeholder="状态"
         clearable
         style="width: 140px"
@@ -180,20 +180,20 @@
         <el-table-column prop="skuName" label="商品名称" min-width="150" />
         <el-table-column prop="specValues" label="规格" width="100" />
         <el-table-column prop="unit" label="单位" width="80" />
-        <el-table-column prop="systemQuantity" label="系统库存" width="100" />
-        <el-table-column prop="actualQuantity" label="实盘数量" width="100">
+        <el-table-column prop="systemQty" label="系统库存" width="100" />
+        <el-table-column prop="actualQty" label="实盘数量" width="100">
           <template slot-scope="scope">
-            <span v-if="!isChecking">{{ scope.row.actualQuantity }}</span>
+            <span v-if="!isChecking">{{ scope.row.actualQty }}</span>
             <el-input-number 
               v-else
-              v-model="scope.row.actualQuantity" 
+              v-model="scope.row.actualQty" 
               :min="0" 
               size="small" 
               style="width: 100%"
             />
           </template>
         </el-table-column>
-        <el-table-column prop="difference" label="差异" width="80">
+        <el-table-column prop="diffQty" label="差异" width="80">
           <template slot-scope="scope">
             <span :style="{ color: getDifferenceColor(scope.row) }">
               {{ getDifference(scope.row) }}
@@ -201,7 +201,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="price" label="单价" width="100">
-          <template slot-scope="scope">¥{{ scope.row.price }}</template>
+          <template slot-scope="scope">¥{{ scope.row.price || 0 }}</template>
         </el-table-column>
         <el-table-column prop="differenceAmount" label="差异金额" width="100">
           <template slot-scope="scope">
@@ -247,13 +247,10 @@ export default {
         pageSize: 10,
         checkNo: '',
         warehouseId: '',
-        status: ''
+        checkStatus: ''
       },
       // 仓库选项
-      warehouseOptions: [
-        { id: 1, name: '主仓库' },
-        { id: 2, name: '分仓库' }
-      ],
+      warehouseOptions: [],
       // 新增
       createVisible: false,
       createLoading: false,
@@ -319,20 +316,20 @@ export default {
     
     // 差异计算
     getDifference(row) {
-      if (row.actualQuantity === null || row.actualQuantity === undefined) return '-'
-      const diff = row.actualQuantity - row.systemQuantity
+      if (row.actualQty === null || row.actualQty === undefined) return '-'
+      const diff = parseFloat(row.actualQty) - parseFloat(row.systemQty || 0)
       return diff > 0 ? '+' + diff : diff
     },
     getDifferenceColor(row) {
-      if (row.actualQuantity === null || row.actualQuantity === undefined) return ''
-      const diff = row.actualQuantity - row.systemQuantity
+      if (row.actualQty === null || row.actualQty === undefined) return ''
+      const diff = parseFloat(row.actualQty) - parseFloat(row.systemQty || 0)
       if (diff > 0) return '#67C23A'
       if (diff < 0) return '#F56C6C'
       return ''
     },
     getDifferenceAmount(row) {
-      if (row.actualQuantity === null || row.actualQuantity === undefined) return '-'
-      const diff = (row.actualQuantity - row.systemQuantity) * row.price
+      if (row.actualQty === null || row.actualQty === undefined) return '-'
+      const diff = (parseFloat(row.actualQty) - parseFloat(row.systemQty || 0)) * (row.price || 0)
       return diff.toFixed(2)
     },
     
@@ -404,8 +401,9 @@ export default {
         this.createLoading = true
         try {
           const data = {
-            ...this.createForm,
-            skuIds: this.selectedSkuIds
+            warehouseId: this.createForm.warehouseId,
+            skuIds: this.selectedSkuIds,
+            remark: this.createForm.remark
           }
           await createCheck(data)
           this.$message.success('创建成功')
@@ -413,6 +411,7 @@ export default {
           this.getList()
         } catch (error) {
           console.error(error)
+          this.$message.error('创建失败，请稍后重试')
         } finally {
           this.createLoading = false
         }

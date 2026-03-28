@@ -1,5 +1,6 @@
 package com.graduation.inventory.business.entity.dto;
 
+import com.graduation.inventory.business.entity.BusStockCheckItem;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -52,6 +53,12 @@ public class StockCheckDto implements Serializable {
     @ApiModelProperty(value = "SKU ID列表", required = true)
     @NotNull(message = "请选择要盘点的商品")
     private List<Long> skuIds;
+
+    /**
+     * 盘点明细列表（批量提交实盘数量时使用）
+     */
+    @ApiModelProperty("盘点明细列表")
+    private List<BusStockCheckItem> items;
 
     /**
      * 盘点明细ID（提交实盘数量时使用）
