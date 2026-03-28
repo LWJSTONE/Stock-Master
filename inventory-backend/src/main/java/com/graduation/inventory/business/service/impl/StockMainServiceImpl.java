@@ -41,6 +41,7 @@ public class StockMainServiceImpl extends ServiceImpl<StockMainMapper, StockMain
     /**
      * 分页查询库存列表（包含关联信息）
      */
+    @Override
     public Map<String, Object> selectStockListWithInfo(Integer pageNum, Integer pageSize, Long warehouseId, String keyword) {
         long offset = (long) (pageNum - 1) * pageSize;
         String skuCode = null;

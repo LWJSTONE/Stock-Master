@@ -28,6 +28,17 @@ public interface StockMainService extends IService<StockMain> {
     Page<StockMain> selectStockPage(Page<StockMain> page, Long warehouseId, String skuCode, String skuName);
 
     /**
+     * 分页查询库存列表（包含关联信息）
+     *
+     * @param pageNum     页码
+     * @param pageSize    每页数量
+     * @param warehouseId 仓库ID
+     * @param keyword     关键词
+     * @return 库存列表
+     */
+    Map<String, Object> selectStockListWithInfo(Integer pageNum, Integer pageSize, Long warehouseId, String keyword);
+
+    /**
      * 根据ID查询库存详情
      *
      * @param id 库存ID
