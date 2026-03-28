@@ -14,13 +14,13 @@ CREATE TABLE IF NOT EXISTS sys_user (
     phone VARCHAR(20) DEFAULT NULL COMMENT '手机号码',
     email VARCHAR(100) DEFAULT NULL COMMENT '邮箱',
     dept_id BIGINT DEFAULT NULL COMMENT '部门ID',
-    status TINYINT DEFAULT 1 COMMENT '状态(0禁用 1启用)',
+    status VARCHAR(1) DEFAULT '0' COMMENT '状态(0正常 1停用)',
     avatar VARCHAR(255) DEFAULT NULL COMMENT '头像地址',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
-    is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
+    del_flag VARCHAR(1) DEFAULT '0' COMMENT '删除标志(0存在 1删除)',
     PRIMARY KEY (id)
 );
 
@@ -34,11 +34,15 @@ CREATE TABLE IF NOT EXISTS sys_dept (
     parent_id BIGINT DEFAULT 0 COMMENT '父部门ID',
     dept_name VARCHAR(50) NOT NULL COMMENT '部门名称',
     order_num INT DEFAULT 0 COMMENT '显示顺序',
+    leader VARCHAR(50) DEFAULT NULL COMMENT '负责人',
+    phone VARCHAR(20) DEFAULT NULL COMMENT '联系电话',
+    email VARCHAR(100) DEFAULT NULL COMMENT '邮箱',
+    status VARCHAR(1) DEFAULT '0' COMMENT '状态(0正常 1停用)',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
-    is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
+    del_flag VARCHAR(1) DEFAULT '0' COMMENT '删除标志(0存在 1删除)',
     PRIMARY KEY (id)
 );
 
@@ -49,13 +53,13 @@ CREATE TABLE IF NOT EXISTS sys_role (
     id BIGINT NOT NULL AUTO_INCREMENT COMMENT '角色ID',
     role_name VARCHAR(50) NOT NULL COMMENT '角色名称',
     role_key VARCHAR(50) NOT NULL COMMENT '角色权限字符',
-    data_scope TINYINT DEFAULT 1 COMMENT '数据范围',
-    status TINYINT DEFAULT 1 COMMENT '状态(0禁用 1启用)',
+    data_scope VARCHAR(1) DEFAULT '1' COMMENT '数据范围',
+    status VARCHAR(1) DEFAULT '0' COMMENT '状态(0正常 1停用)',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
-    is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
+    del_flag VARCHAR(1) DEFAULT '0' COMMENT '删除标志(0存在 1删除)',
     PRIMARY KEY (id)
 );
 
@@ -69,14 +73,16 @@ CREATE TABLE IF NOT EXISTS sys_menu (
     path VARCHAR(200) DEFAULT NULL COMMENT '路由地址',
     component VARCHAR(200) DEFAULT NULL COMMENT '组件路径',
     perms VARCHAR(100) DEFAULT NULL COMMENT '权限标识',
-    type TINYINT DEFAULT 0 COMMENT '类型(0目录 1菜单 2按钮)',
+    type VARCHAR(1) DEFAULT 'M' COMMENT '类型(M目录 C菜单 F按钮)',
     order_num INT DEFAULT 0 COMMENT '显示顺序',
-    status TINYINT DEFAULT 1 COMMENT '状态(0禁用 1启用)',
+    visible VARCHAR(1) DEFAULT '0' COMMENT '是否显示(0显示 1隐藏)',
+    status VARCHAR(1) DEFAULT '0' COMMENT '状态(0正常 1停用)',
+    icon VARCHAR(100) DEFAULT NULL COMMENT '菜单图标',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
-    is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
+    del_flag VARCHAR(1) DEFAULT '0' COMMENT '删除标志(0存在 1删除)',
     PRIMARY KEY (id)
 );
 

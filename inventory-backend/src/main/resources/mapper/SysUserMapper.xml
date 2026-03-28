@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.graduation.inventory.system.mapper.SysUserMapper">
+
+    <!-- 根据用户名查询用户 -->
+    <select id="selectUserByUsername" resultType="com.graduation.inventory.system.entity.SysUser">
+        SELECT id, username, password, real_name, phone, email, dept_id, status, avatar,
+               create_time, update_time, create_by, update_by, del_flag
+        FROM sys_user
+        WHERE username = #{username} AND del_flag = '0'
+    </select>
+
+    <!-- 根据手机号查询用户 -->
+    <select id="selectUserByPhone" resultType="com.graduation.inventory.system.entity.SysUser">
+        SELECT id, username, password, real_name, phone, email, dept_id, status, avatar,
+               create_time, update_time, create_by, update_by, del_flag
+        FROM sys_user
+        WHERE phone = #{phone} AND del_flag = '0'
+    </select>
+
+    <!-- 根据部门ID查询用户列表 -->
+    <select id="selectUsersByDeptId" resultType="com.graduation.inventory.system.entity.SysUser">
+        SELECT id, username, password, real_name, phone, email, dept_id, status, avatar,
+               create_time, update_time, create_by, update_by, del_flag
+        FROM sys_user
+        WHERE dept_id = #{deptId} AND del_flag = '0'
+        ORDER BY create_time DESC
+    </select>
+
+    <!-- 根据用户ID查询角色编码列表 -->
+    <select id="selectRoleKeysByUserId" resultType="java.lang.String">
+        SELECT r.role_key
+        FROM sys_role r
+        INNER JOIN sys_user_role ur ON r.id = ur.role_id
+        WHERE ur.user_id = #{userId} AND r.del_flag = '0'
+    </select>
+
+</mapper>
