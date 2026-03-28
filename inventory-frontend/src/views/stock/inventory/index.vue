@@ -196,9 +196,19 @@ export default {
   },
   created() {
     this.getList()
-    // this.loadWarehouseOptions()
+    this.loadWarehouseOptions()
   },
   methods: {
+    // 加载仓库选项
+    async loadWarehouseOptions() {
+      try {
+        const res = await getWarehouseOptions()
+        this.warehouseOptions = res.data || []
+      } catch (error) {
+        console.error('加载仓库选项失败:', error)
+      }
+    },
+    
     // 获取列表
     async getList() {
       this.listLoading = true
@@ -208,12 +218,8 @@ export default {
         this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
-        // 如果接口报错，使用模拟数据
-        this.list = [
-          { id: 1, warehouseId: 1, warehouseName: '主仓库', skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', availableQuantity: 80, lockedQuantity: 20, totalQuantity: 100, minQuantity: 50, batchNo: 'B20240101001', location: 'A-01-01' },
-          { id: 2, warehouseId: 1, warehouseName: '主仓库', skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', availableQuantity: 200, lockedQuantity: 0, totalQuantity: 200, minQuantity: 100, batchNo: 'B20240102001', location: 'A-02-01' }
-        ]
-        this.total = 2
+        this.list = []
+        this.total = 0
       } finally {
         this.listLoading = false
       }
@@ -351,14 +357,14 @@ export default {
     // 查看明细
     async handleDetail(row) {
       this.detailData = row
-      // 模拟流水数据
-      this.inventoryLogs = [
-        { createTime: '2024-01-01 10:00:00', type: 'in', quantity: 100, beforeQuantity: 0, afterQuantity: 100, orderNo: 'RK202401010001', remark: '采购入库' },
-        { createTime: '2024-01-02 11:00:00', type: 'out', quantity: 20, beforeQuantity: 100, afterQuantity: 80, orderNo: 'CK202401020001', remark: '销售出库' }
-      ]
       this.detailVisible = true
-      // const res = await getInventoryLog({ inventoryId: row.id })
-      // this.inventoryLogs = res.data
+      try {
+        const res = await getInventoryLog({ skuId: row.skuId })
+        this.inventoryLogs = res.data || []
+      } catch (error) {
+        console.error('加载库存流水失败:', error)
+        this.inventoryLogs = []
+      }
     }
   }
 }

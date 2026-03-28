@@ -359,8 +359,9 @@ export default {
   },
   created() {
     this.getList()
-    // this.loadCategories()
-    // this.loadBrands()
+    this.loadCategories()
+    this.loadBrands()
+    this.loadUnits()
   },
   watch: {
     specList: {
@@ -391,6 +392,36 @@ export default {
         this.total = 0
       } finally {
         this.listLoading = false
+      }
+    },
+    
+    // 加载分类列表
+    async loadCategories() {
+      try {
+        const res = await getCategoryList()
+        this.categoryOptions = res.data || []
+      } catch (error) {
+        console.error('加载分类失败:', error)
+      }
+    },
+    
+    // 加载品牌列表
+    async loadBrands() {
+      try {
+        const res = await getBrandOptions()
+        this.brandOptions = res.data || []
+      } catch (error) {
+        console.error('加载品牌失败:', error)
+      }
+    },
+    
+    // 加载单位列表
+    async loadUnits() {
+      try {
+        const res = await getUnitList()
+        this.unitOptions = res.data || []
+      } catch (error) {
+        console.error('加载单位失败:', error)
       }
     },
     
@@ -487,16 +518,11 @@ export default {
     // 加载SKU列表
     async loadSkuList(productId) {
       try {
-        // 模拟数据
-        this.skuList = [
-          { id: 1, productId: productId, skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', specValues: '红色,L', price: 5999, costPrice: 4500, status: 1 },
-          { id: 2, productId: productId, skuCode: 'PRD001-RED-M', skuName: '笔记本电脑-红色-M', specValues: '红色,M', price: 5799, costPrice: 4300, status: 1 },
-          { id: 3, productId: productId, skuCode: 'PRD001-BLUE-L', skuName: '笔记本电脑-蓝色-L', specValues: '蓝色,L', price: 5999, costPrice: 4500, status: 1 }
-        ]
-        // const res = await getSkuList(productId)
-        // this.skuList = res.data
+        const res = await getSkuList(productId)
+        this.skuList = res.data || []
       } catch (error) {
-        console.error(error)
+        console.error('加载SKU列表失败:', error)
+        this.skuList = []
       }
     },
     
@@ -528,11 +554,15 @@ export default {
         if (!valid) return
         
         try {
+          const data = {
+            ...this.skuForm,
+            spuId: this.currentProduct.id
+          }
           if (this.skuForm.id) {
-            await updateSku(this.currentProduct.id, this.skuForm)
+            await updateSku(data)
             this.$message.success('修改成功')
           } else {
-            await createSku(this.currentProduct.id, this.skuForm)
+            await createSku(data)
             this.$message.success('新增成功')
           }
           this.skuFormDialogVisible = false
@@ -549,7 +579,7 @@ export default {
         type: 'warning'
       }).then(async () => {
         try {
-          await deleteSku(this.currentProduct.id, row.id)
+          await deleteSku(row.id)
           this.$message.success('删除成功')
           this.loadSkuList(this.currentProduct.id)
         } catch (error) {

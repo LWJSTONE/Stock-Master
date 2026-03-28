@@ -58,33 +58,42 @@ export function getCategoryList() {
 // 获取SKU列表
 export function getSkuList(productId) {
   return request({
-    url: `/api/base/product/${productId}/sku`,
+    url: `/api/base/product/${productId}/skuList`,
     method: 'get'
   })
 }
 
-// 创建SKU
-export function createSku(productId, data) {
+// 获取所有SKU列表（用于商品选择）
+export function getAllSkuList(params) {
   return request({
-    url: `/api/base/product/${productId}/sku`,
+    url: '/api/base/sku/list',
+    method: 'get',
+    params
+  })
+}
+
+// 创建SKU
+export function createSku(data) {
+  return request({
+    url: '/api/base/sku',
     method: 'post',
     data
   })
 }
 
 // 更新SKU
-export function updateSku(productId, data) {
+export function updateSku(data) {
   return request({
-    url: `/api/base/product/${productId}/sku`,
+    url: '/api/base/sku',
     method: 'put',
     data
   })
 }
 
 // 删除SKU
-export function deleteSku(productId, skuId) {
+export function deleteSku(skuId) {
   return request({
-    url: `/api/base/product/${productId}/sku/${skuId}`,
+    url: `/api/base/sku/${skuId}`,
     method: 'delete'
   })
 }
@@ -92,7 +101,7 @@ export function deleteSku(productId, skuId) {
 // 批量生成SKU（笛卡尔积）
 export function generateSku(productId, data) {
   return request({
-    url: `/api/base/product/${productId}/sku/generate`,
+    url: `/api/base/sku/batchGenerate/${productId}`,
     method: 'post',
     data
   })
@@ -146,7 +155,7 @@ export function deleteWarehouse(id) {
 // 获取所有启用的仓库（下拉选择用）
 export function getWarehouseOptions() {
   return request({
-    url: '/api/base/warehouse/options',
+    url: '/api/base/warehouse/listAll',
     method: 'get'
   })
 }
@@ -199,7 +208,7 @@ export function deleteSupplier(id) {
 // 获取所有启用的供应商（下拉选择用）
 export function getSupplierOptions() {
   return request({
-    url: '/api/base/supplier/options',
+    url: '/api/base/supplier/listAll',
     method: 'get'
   })
 }
@@ -252,7 +261,7 @@ export function deleteCustomer(id) {
 // 获取所有启用的客户（下拉选择用）
 export function getCustomerOptions() {
   return request({
-    url: '/api/base/customer/options',
+    url: '/api/base/customer/listAll',
     method: 'get'
   })
 }

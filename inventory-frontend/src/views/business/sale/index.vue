@@ -330,7 +330,7 @@ import {
   cancelSale,
   saleOutbound
 } from '@/api/business'
-import { getCustomerOptions, getWarehouseOptions } from '@/api/base'
+import { getCustomerOptions, getWarehouseOptions, getAllSkuList } from '@/api/base'
 
 export default {
   name: 'SaleManagement',
@@ -403,9 +403,23 @@ export default {
   },
   created() {
     this.getList()
-    // this.loadOptions()
+    this.loadOptions()
   },
   methods: {
+    // 加载下拉选项
+    async loadOptions() {
+      try {
+        const [customerRes, warehouseRes] = await Promise.all([
+          getCustomerOptions(),
+          getWarehouseOptions()
+        ])
+        this.customerOptions = customerRes.data || []
+        this.warehouseOptions = warehouseRes.data || []
+      } catch (error) {
+        console.error('加载选项失败:', error)
+      }
+    },
+    
     // 获取列表
     async getList() {
       this.listLoading = true
@@ -415,24 +429,8 @@ export default {
         this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
-        // 如果接口报错，使用模拟数据
-        this.list = [
-          { 
-            id: 1, 
-            orderNo: 'SO202401010001', 
-            customerId: 1,
-            customerName: '客户A', 
-            totalAmount: 29995, 
-            status: 0, 
-            expectedDate: '2024-01-10',
-            createTime: '2024-01-01 09:00:00',
-            remark: '',
-            items: [
-              { skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', specValues: '红色,L', unit: '台', price: 5999, quantity: 5, amount: 29995 }
-            ]
-          }
-        ]
-        this.total = 1
+        this.list = []
+        this.total = 0
       } finally {
         this.listLoading = false
       }
@@ -617,14 +615,14 @@ export default {
     },
     
     // 加载商品列表
-    loadProductList() {
-      // 模拟数据
-      this.productList = [
-        { id: 1, skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', specValues: '红色,L', unit: '台', price: 5999, stock: 100 },
-        { id: 2, skuCode: 'PRD001-RED-M', skuName: '笔记本电脑-红色-M', specValues: '红色,M', unit: '台', price: 5799, stock: 50 },
-        { id: 3, skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', specValues: '蓝色,M', unit: '台', price: 3999, stock: 200 },
-        { id: 4, skuCode: 'PRD003-2L', skuName: '洗衣液-2L', specValues: '2L', unit: '瓶', price: 39.9, stock: 500 }
-      ]
+    async loadProductList() {
+      try {
+        const res = await getAllSkuList({ pageNum: 1, pageSize: 100 })
+        this.productList = res.data.rows || []
+      } catch (error) {
+        console.error('加载商品列表失败:', error)
+        this.productList = []
+      }
     },
     
     // 搜索商品

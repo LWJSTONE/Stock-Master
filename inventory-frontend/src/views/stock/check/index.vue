@@ -233,7 +233,7 @@
 
 <script>
 import { getCheckList, createCheck, deleteCheck, confirmCheck, updateCheckItem, getCheckItems } from '@/api/stock'
-import { getWarehouseOptions } from '@/api/base'
+import { getWarehouseOptions, getInventoryList } from '@/api/base'
 
 export default {
   name: 'StockCheck',
@@ -278,55 +278,30 @@ export default {
   },
   created() {
     this.getList()
-    // this.loadWarehouseOptions()
+    this.loadWarehouseOptions()
   },
   methods: {
+    // 加载仓库选项
+    async loadWarehouseOptions() {
+      try {
+        const res = await getWarehouseOptions()
+        this.warehouseOptions = res.data || []
+      } catch (error) {
+        console.error('加载仓库选项失败:', error)
+      }
+    },
+    
     // 获取列表
     async getList() {
       this.listLoading = true
       try {
-        // 模拟数据
-        this.list = [
-          { 
-            id: 1, 
-            checkNo: 'PD202401010001', 
-            warehouseId: 1,
-            warehouseName: '主仓库', 
-            productCount: 50, 
-            differenceCount: 2, 
-            differenceAmount: 11998,
-            status: 1, 
-            checkTime: '2024-01-01 17:00:00',
-            createBy: '张三',
-            createTime: '2024-01-01 09:00:00',
-            items: [
-              { skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', specValues: '红色,L', unit: '台', systemQuantity: 100, actualQuantity: 102, price: 5999, location: 'A-01-01' },
-              { skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', specValues: '蓝色,M', unit: '台', systemQuantity: 200, actualQuantity: 200, price: 3999, location: 'A-02-01' }
-            ]
-          },
-          { 
-            id: 2, 
-            checkNo: 'PD202401020001', 
-            warehouseId: 2,
-            warehouseName: '分仓库', 
-            productCount: 30, 
-            differenceCount: 0, 
-            differenceAmount: 0,
-            status: 0, 
-            checkTime: null,
-            createBy: '李四',
-            createTime: '2024-01-02 10:00:00',
-            items: [
-              { skuCode: 'PRD003-2L', skuName: '洗衣液-2L', specValues: '2L', unit: '瓶', systemQuantity: 30, actualQuantity: null, price: 39.9, location: 'B-01-01' }
-            ]
-          }
-        ]
-        this.total = 2
-        // const res = await getCheckList(this.listQuery)
-        // this.list = res.data.list
-        // this.total = res.data.total
+        const res = await getCheckList(this.listQuery)
+        this.list = res.data.rows || []
+        this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
+        this.list = []
+        this.total = 0
       } finally {
         this.listLoading = false
       }
@@ -396,13 +371,19 @@ export default {
         this.availableSkuList = []
         return
       }
-      // TODO: 根据仓库加载库存商品
-      // 模拟数据
-      this.availableSkuList = [
-        { id: 1, skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', specValues: '红色,L', quantity: 100 },
-        { id: 2, skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', specValues: '蓝色,M', quantity: 200 },
-        { id: 3, skuCode: 'PRD003-2L', skuName: '洗衣液-2L', specValues: '2L', quantity: 50 }
-      ]
+      try {
+        const res = await getInventoryList({ warehouseId, pageNum: 1, pageSize: 100 })
+        this.availableSkuList = (res.data.rows || []).map(item => ({
+          id: item.skuId,
+          skuCode: item.skuCode,
+          skuName: item.skuName,
+          specValues: item.specValues,
+          quantity: item.availableQuantity
+        }))
+      } catch (error) {
+        console.error('加载库存商品失败:', error)
+        this.availableSkuList = []
+      }
     },
     
     // 商品选择变化
