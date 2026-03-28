@@ -95,7 +95,12 @@ public class DashboardServiceImpl implements DashboardService {
             Long pendingSale = saleOrderMapper.selectCount(saleWrapper);
             overview.setPendingSale(pendingSale != null ? pendingSale.intValue() : 0);
             
-            // 5. 统计今日入库
+            // 5. 设置待审核订单总数
+            int totalPending = (pendingPurchase != null ? pendingPurchase.intValue() : 0) 
+                             + (pendingSale != null ? pendingSale.intValue() : 0);
+            overview.setPendingOrders(totalPending);
+            
+            // 6. 统计今日入库
             LocalDateTime todayStart = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
             LocalDateTime todayEnd = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
             Date startDate = Date.from(todayStart.atZone(ZoneId.systemDefault()).toInstant());
@@ -134,6 +139,7 @@ public class DashboardServiceImpl implements DashboardService {
             overview.setTotalSku(0);
             overview.setPendingPurchase(0);
             overview.setPendingSale(0);
+            overview.setPendingOrders(0);
             overview.setTodayInbound(BigDecimal.ZERO);
             overview.setTodayOutbound(BigDecimal.ZERO);
         }

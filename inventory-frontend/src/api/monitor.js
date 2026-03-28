@@ -36,3 +36,21 @@ export function exportLog(params) {
     responseType: 'blob'
   })
 }
+
+// ==================== 在线用户 ====================
+
+// 获取在线用户列表
+export function getOnlineUsers() {
+  return request({
+    url: '/api/monitor/online/list',
+    method: 'get'
+  })
+}
+
+// 强制下线用户
+export function forceLogout(username) {
+  return request({
+    url: `/api/monitor/online/forceLogout/${username}`,
+    method: 'delete'
+  })
+}

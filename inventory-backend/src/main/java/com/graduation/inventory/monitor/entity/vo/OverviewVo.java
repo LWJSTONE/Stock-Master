@@ -54,4 +54,10 @@ public class OverviewVo implements Serializable {
      */
     @ApiModelProperty(value = "今日出库")
     private BigDecimal todayOutbound;
+
+    /**
+     * 待审核订单总数（采购单+销售单）
+     */
+    @ApiModelProperty(value = "待审核订单总数")
+    private Integer pendingOrders;
 }

@@ -67,7 +67,7 @@
     <!-- 分页 -->
     <el-pagination
       v-show="total > 0"
-      :current-page="listQuery.page"
+      :current-page="listQuery.pageNum"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="listQuery.pageSize"
       :total="total"
@@ -160,7 +160,7 @@ export default {
       total: 0,
       listLoading: false,
       listQuery: {
-        page: 1,
+        pageNum: 1,
         pageSize: 10,
         warehouseId: '',
         keyword: ''
@@ -218,6 +218,7 @@ export default {
         this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
+        this.$message.error('获取库存数据失败')
         this.list = []
         this.total = 0
       } finally {
@@ -245,7 +246,7 @@ export default {
     
     // 搜索
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.pageNum = 1
       this.getList()
     },
     
@@ -255,7 +256,7 @@ export default {
       this.getList()
     },
     handleCurrentChange(val) {
-      this.listQuery.page = val
+      this.listQuery.pageNum = val
       this.getList()
     },
     

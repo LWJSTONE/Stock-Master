@@ -18,7 +18,7 @@
       </el-button>
     </div>
 
-    <el-table :data="filteredList" border style="width: 100%">
+    <el-table v-loading="loading" :data="filteredList" border style="width: 100%">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="username" label="用户名" />
       <el-table-column prop="ip" label="登录IP" />
@@ -35,21 +35,19 @@
       </el-table-column>
     </el-table>
 
-    <el-empty v-if="filteredList.length === 0" description="暂无在线用户数据" />
+    <el-empty v-if="filteredList.length === 0 && !loading" description="暂无在线用户数据" />
   </div>
 </template>
 
 <script>
+import { getOnlineUsers, forceLogout } from '@/api/monitor'
+
 export default {
   name: 'OnlineUsers',
   data() {
     return {
-      list: [
-        { id: 1, username: 'admin', ip: '192.168.1.100', location: '北京市', browser: 'Chrome 120', os: 'Windows 10', loginTime: '2024-01-01 08:00:00' },
-        { id: 2, username: 'user1', ip: '192.168.1.101', location: '上海市', browser: 'Firefox 121', os: 'Mac OS', loginTime: '2024-01-01 09:30:00' },
-        { id: 3, username: 'warehouse', ip: '192.168.1.102', location: '广州市', browser: 'Edge 120', os: 'Windows 11', loginTime: '2024-01-01 10:15:00' },
-        { id: 4, username: 'sales', ip: '192.168.1.103', location: '深圳市', browser: 'Chrome 120', os: 'Linux', loginTime: '2024-01-01 11:00:00' }
-      ],
+      list: [],
+      loading: false,
       searchUsername: ''
     }
   },
@@ -63,7 +61,24 @@ export default {
       )
     }
   },
+  created() {
+    this.getList()
+  },
   methods: {
+    // 获取在线用户列表
+    async getList() {
+      this.loading = true
+      try {
+        const res = await getOnlineUsers()
+        this.list = res.data || []
+      } catch (error) {
+        console.error('获取在线用户列表失败:', error)
+        this.list = []
+      } finally {
+        this.loading = false
+      }
+    },
+    
     handleFilter() {
       // 搜索通过计算属性自动实现
     },
@@ -73,13 +88,19 @@ export default {
     handleForceLogout(row) {
       this.$confirm(`确认强制下线用户 "${row.username}"?`, '提示', {
         type: 'warning'
-      }).then(() => {
-        // 从列表中移除
-        const index = this.list.findIndex(item => item.id === row.id)
-        if (index > -1) {
-          this.list.splice(index, 1)
+      }).then(async () => {
+        try {
+          await forceLogout(row.username)
+          // 从列表中移除
+          const index = this.list.findIndex(item => item.id === row.id)
+          if (index > -1) {
+            this.list.splice(index, 1)
+          }
+          this.$message.success(`已强制下线用户: ${row.username}`)
+        } catch (error) {
+          console.error('强制下线失败:', error)
+          this.$message.error('强制下线失败')
         }
-        this.$message.success(`已强制下线用户: ${row.username}`)
       }).catch(() => {})
     }
   }

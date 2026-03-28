@@ -36,15 +36,13 @@ public class StockController {
     @ApiOperation("分页查询实时库存")
     @PreAuthorize("@ss.hasPermi('stock:main:list')")
     @GetMapping("/main/list")
-    public Result<PageResult<StockMain>> listStock(
+    public Result<Map<String, Object>> listStock(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer pageNum,
             @ApiParam("每页数量") @RequestParam(defaultValue = "10") Integer pageSize,
             @ApiParam("仓库ID") @RequestParam(required = false) Long warehouseId,
-            @ApiParam("SKU编码") @RequestParam(required = false) String skuCode,
-            @ApiParam("SKU名称") @RequestParam(required = false) String skuName) {
-        Page<StockMain> page = new Page<>(pageNum, pageSize);
-        Page<StockMain> result = stockMainService.selectStockPage(page, warehouseId, skuCode, skuName);
-        return Result.success(new PageResult<>(result.getRecords(), result.getTotal()));
+            @ApiParam("关键词") @RequestParam(required = false) String keyword) {
+        Map<String, Object> result = stockMainService.selectStockListWithInfo(pageNum, pageSize, warehouseId, keyword);
+        return Result.success(result);
     }
 
     /**

@@ -37,6 +37,48 @@ public class StockMainServiceImpl extends ServiceImpl<StockMainMapper, StockMain
         // 实际项目中可能需要自定义SQL进行关联查询
         return baseMapper.selectPage(page, wrapper);
     }
+    
+    /**
+     * 分页查询库存列表（包含关联信息）
+     */
+    public Map<String, Object> selectStockListWithInfo(Integer pageNum, Integer pageSize, Long warehouseId, String keyword) {
+        long offset = (long) (pageNum - 1) * pageSize;
+        String skuCode = null;
+        String skuName = null;
+        
+        // 如果有关键词，同时搜索SKU编码和名称
+        if (StringUtils.hasText(keyword)) {
+            skuCode = keyword;
+            skuName = keyword;
+        }
+        
+        List<Map<String, Object>> list = baseMapper.selectStockList(offset, pageSize, warehouseId, skuCode, skuName);
+        Long total = baseMapper.selectStockListCount(warehouseId, skuCode, skuName);
+        
+        // 转换字段名以匹配前端
+        List<Map<String, Object>> resultList = new ArrayList<>();
+        for (Map<String, Object> item : list) {
+            Map<String, Object> newItem = new HashMap<>();
+            newItem.put("id", item.get("id"));
+            newItem.put("warehouseId", item.get("warehouse_id"));
+            newItem.put("warehouseName", item.get("wh_name"));
+            newItem.put("skuId", item.get("sku_id"));
+            newItem.put("skuCode", item.get("sku_code"));
+            newItem.put("skuName", item.get("sku_name"));
+            newItem.put("availableQuantity", item.get("quantity"));
+            newItem.put("lockedQuantity", item.get("frozen_qty"));
+            newItem.put("totalQuantity", item.get("quantity"));
+            newItem.put("batchNo", item.get("batch_no"));
+            newItem.put("location", item.get("position"));
+            newItem.put("minQuantity", item.get("safety_stock"));
+            resultList.add(newItem);
+        }
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("rows", resultList);
+        result.put("total", total);
+        return result;
+    }
 
     @Override
     public StockMain selectStockById(Long id) {
@@ -55,10 +97,7 @@ public class StockMainServiceImpl extends ServiceImpl<StockMainMapper, StockMain
 
     @Override
     public List<Map<String, Object>> selectWarningList(Long warehouseId) {
-        // 查询库存预警列表，这里简化处理
-        // 实际项目中需要根据商品的安全库存进行比较
-        List<Map<String, Object>> warningList = new ArrayList<>();
-        // 可以在这里添加查询库存低于安全库存的逻辑
-        return warningList;
+        // 查询库存预警列表
+        return baseMapper.selectStockWarningList();
     }
 }
