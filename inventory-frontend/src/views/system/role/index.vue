@@ -64,15 +64,16 @@
     >
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column prop="id" label="ID" width="80" align="center" />
-      <el-table-column prop="name" label="角色名称" min-width="120" />
-      <el-table-column prop="code" label="权限字符" min-width="120" />
-      <el-table-column prop="sort" label="排序" width="80" align="center" />
+      <el-table-column prop="roleName" label="角色名称" min-width="120" />
+      <el-table-column prop="roleKey" label="权限字符" min-width="120" />
       <el-table-column prop="status" label="状态" width="100" align="center">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="启用"
+            inactive-text="禁用"
             @change="handleStatusChange(scope.row)"
           />
         </template>
@@ -128,19 +129,16 @@
     <!-- 新增/编辑弹窗 -->
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="500px" @close="handleDialogClose">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="角色名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入角色名称" />
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="form.roleName" placeholder="请输入角色名称" />
         </el-form-item>
-        <el-form-item label="权限字符" prop="code">
-          <el-input v-model="form.code" placeholder="请输入权限字符" />
-        </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input-number v-model="form.sort" :min="0" :max="999" />
+        <el-form-item label="权限字符" prop="roleKey">
+          <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">禁用</el-radio>
+            <el-radio label="0">启用</el-radio>
+            <el-radio label="1">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -157,7 +155,7 @@
     <el-dialog title="分配菜单权限" :visible.sync="menuDialogVisible" width="500px">
       <el-form ref="menuForm" label-width="80px">
         <el-form-item label="角色名称">
-          <el-input :value="currentRole.name" disabled />
+          <el-input :value="currentRole.roleName" disabled />
         </el-form-item>
         <el-form-item label="菜单权限">
           <el-tree
@@ -216,17 +214,16 @@ export default {
       submitLoading: false,
       form: {
         id: null,
-        name: '',
-        code: '',
-        sort: 0,
-        status: 1,
+        roleName: '',
+        roleKey: '',
+        status: '0',
         remark: ''
       },
       rules: {
-        name: [
+        roleName: [
           { required: true, message: '请输入角色名称', trigger: 'blur' }
         ],
-        code: [
+        roleKey: [
           { required: true, message: '请输入权限字符', trigger: 'blur' }
         ]
       },
@@ -389,10 +386,9 @@ export default {
     resetForm() {
       this.form = {
         id: null,
-        name: '',
-        code: '',
-        sort: 0,
-        status: 1,
+        roleName: '',
+        roleKey: '',
+        status: '0',
         remark: ''
       }
     },

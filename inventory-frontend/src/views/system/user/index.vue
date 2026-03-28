@@ -74,15 +74,17 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column prop="id" label="ID" width="80" align="center" />
       <el-table-column prop="username" label="用户名" min-width="120" />
-      <el-table-column prop="nickname" label="姓名" min-width="100" />
+      <el-table-column prop="realName" label="姓名" min-width="100" />
       <el-table-column prop="deptName" label="部门" min-width="120" />
       <el-table-column prop="phone" label="手机号" min-width="130" />
       <el-table-column prop="status" label="状态" width="100" align="center">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="启用"
+            inactive-text="禁用"
             @change="handleStatusChange(scope.row)"
           />
         </template>
@@ -144,14 +146,14 @@
         <el-form-item v-if="!isEdit" label="密码" prop="password">
           <el-input v-model="form.password" type="password" placeholder="请输入密码" show-password />
         </el-form-item>
-        <el-form-item label="姓名" prop="nickname">
-          <el-input v-model="form.nickname" placeholder="请输入姓名" />
+        <el-form-item label="姓名" prop="realName">
+          <el-input v-model="form.realName" placeholder="请输入姓名" />
         </el-form-item>
         <el-form-item label="部门" prop="deptId">
           <el-cascader
             v-model="form.deptId"
             :options="deptOptions"
-            :props="{ value: 'id', label: 'name', checkStrictly: true, emitPath: false }"
+            :props="{ value: 'id', label: 'deptName', checkStrictly: true, emitPath: false }"
             placeholder="请选择部门"
             style="width: 100%"
             clearable
@@ -168,15 +170,15 @@
             <el-option
               v-for="item in roleOptions"
               :key="item.id"
-              :label="item.name"
+              :label="item.roleName"
               :value="item.id"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio :label="1">启用</el-radio>
-            <el-radio :label="0">禁用</el-radio>
+            <el-radio label="0">启用</el-radio>
+            <el-radio label="1">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -231,12 +233,12 @@ export default {
         id: null,
         username: '',
         password: '',
-        nickname: '',
+        realName: '',
         deptId: null,
         phone: '',
         email: '',
         roleIds: [],
-        status: 1,
+        status: '0',
         remark: ''
       },
       rules: {
@@ -248,7 +250,7 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
         ],
-        nickname: [
+        realName: [
           { required: true, message: '请输入姓名', trigger: 'blur' }
         ],
         phone: [
@@ -453,12 +455,12 @@ export default {
         id: null,
         username: '',
         password: '',
-        nickname: '',
+        realName: '',
         deptId: null,
         phone: '',
         email: '',
         roleIds: [],
-        status: 1,
+        status: '0',
         remark: ''
       }
     },

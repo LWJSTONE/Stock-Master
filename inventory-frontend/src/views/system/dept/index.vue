@@ -55,18 +55,19 @@
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       style="width: 100%"
     >
-      <el-table-column prop="name" label="部门名称" min-width="180" />
-      <el-table-column prop="code" label="部门编码" min-width="120" />
+      <el-table-column prop="deptName" label="部门名称" min-width="180" />
+      <el-table-column prop="orderNum" label="排序" width="80" align="center" />
       <el-table-column prop="leader" label="负责人" width="100" />
       <el-table-column prop="phone" label="联系电话" width="130" />
       <el-table-column prop="email" label="邮箱" min-width="180" />
-      <el-table-column prop="sort" label="排序" width="80" align="center" />
       <el-table-column prop="status" label="状态" width="80" align="center">
         <template slot-scope="scope">
           <el-switch
             v-model="scope.row.status"
-            :active-value="1"
-            :inactive-value="0"
+            :active-value="'0'"
+            :inactive-value="'1'"
+            active-text="启用"
+            inactive-text="禁用"
             @change="handleStatusChange(scope.row)"
           />
         </template>
@@ -115,7 +116,7 @@
               <el-cascader
                 v-model="form.parentId"
                 :options="deptOptions"
-                :props="{ value: 'id', label: 'name', checkStrictly: true, emitPath: false }"
+                :props="{ value: 'id', label: 'deptName', checkStrictly: true, emitPath: false }"
                 placeholder="请选择上级部门"
                 style="width: 100%"
                 clearable
@@ -123,13 +124,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入部门名称" />
+            <el-form-item label="部门名称" prop="deptName">
+              <el-input v-model="form.deptName" placeholder="请输入部门名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="部门编码" prop="code">
-              <el-input v-model="form.code" placeholder="请输入部门编码" />
+            <el-form-item label="显示顺序" prop="orderNum">
+              <el-input-number v-model="form.orderNum" :min="0" :max="999" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -148,15 +149,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="排序" prop="sort">
-              <el-input-number v-model="form.sort" :min="0" :max="999" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="状态" prop="status">
               <el-radio-group v-model="form.status">
-                <el-radio :label="1">启用</el-radio>
-                <el-radio :label="0">禁用</el-radio>
+                <el-radio label="0">启用</el-radio>
+                <el-radio label="1">禁用</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -202,20 +198,16 @@ export default {
       form: {
         id: null,
         parentId: null,
-        name: '',
-        code: '',
+        deptName: '',
+        orderNum: 0,
         leader: '',
         phone: '',
         email: '',
-        sort: 0,
-        status: 1
+        status: '0'
       },
       rules: {
-        name: [
+        deptName: [
           { required: true, message: '请输入部门名称', trigger: 'blur' }
-        ],
-        code: [
-          { required: true, message: '请输入部门编码', trigger: 'blur' }
         ],
         phone: [
           { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }
@@ -285,7 +277,7 @@ export default {
       try {
         const res = await getDeptTree()
         this.deptOptions = [
-          { id: 0, name: '根部门', children: res.data || [] }
+          { id: 0, deptName: '根部门', children: res.data || [] }
         ]
       } catch (error) {
         console.error('获取部门树失败:', error)
@@ -398,13 +390,12 @@ export default {
       this.form = {
         id: null,
         parentId: null,
-        name: '',
-        code: '',
+        deptName: '',
+        orderNum: 0,
         leader: '',
         phone: '',
         email: '',
-        sort: 0,
-        status: 1
+        status: '0'
       }
     }
   }
