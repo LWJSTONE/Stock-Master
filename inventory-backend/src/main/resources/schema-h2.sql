@@ -139,8 +139,8 @@ CREATE TABLE IF NOT EXISTS base_category (
     status TINYINT DEFAULT 1 COMMENT '状态(0禁用 1启用)',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -159,8 +159,8 @@ CREATE TABLE IF NOT EXISTS base_product_spu (
     description VARCHAR(500) DEFAULT NULL COMMENT '描述',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -181,8 +181,8 @@ CREATE TABLE IF NOT EXISTS base_product_sku (
     safety_stock INT DEFAULT 0 COMMENT '安全库存',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -200,8 +200,8 @@ CREATE TABLE IF NOT EXISTS base_warehouse (
     status TINYINT DEFAULT 1 COMMENT '状态(0禁用 1启用)',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -219,8 +219,8 @@ CREATE TABLE IF NOT EXISTS base_supplier (
     bank_account VARCHAR(50) DEFAULT NULL COMMENT '银行账号',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -237,8 +237,8 @@ CREATE TABLE IF NOT EXISTS base_customer (
     address VARCHAR(200) DEFAULT NULL COMMENT '地址',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -304,8 +304,8 @@ CREATE TABLE IF NOT EXISTS bus_purchase_order (
     remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -344,8 +344,8 @@ CREATE TABLE IF NOT EXISTS bus_sale_order (
     remark VARCHAR(500) DEFAULT NULL COMMENT '备注',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
@@ -381,8 +381,8 @@ CREATE TABLE IF NOT EXISTS bus_stock_check (
     check_time TIMESTAMP DEFAULT NULL COMMENT '盘点时间',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by BIGINT DEFAULT NULL COMMENT '创建人',
-    update_by BIGINT DEFAULT NULL COMMENT '更新人',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     is_deleted TINYINT DEFAULT 0 COMMENT '删除标志(0未删除 1已删除)',
     PRIMARY KEY (id)
 );
