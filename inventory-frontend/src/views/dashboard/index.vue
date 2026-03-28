@@ -186,8 +186,9 @@ export default {
     }
   },
   mounted() {
-    this.initData()
+    // 先初始化图表，再获取数据
     this.initCharts()
+    this.initData()
     this.startAutoRefresh()
   },
   beforeDestroy() {
@@ -249,7 +250,13 @@ export default {
       try {
         const res = await getTrend({ days: 7 })
         if (res.data) {
-          this.renderTrendChart(res.data)
+          // 后端返回的是数组格式，需要转换
+          const trendData = Array.isArray(res.data) ? {
+            dates: res.data.map(item => item.date),
+            inbound: res.data.map(item => item.inbound),
+            outbound: res.data.map(item => item.outbound)
+          } : res.data
+          this.renderTrendChart(trendData)
         }
       } catch (error) {
         console.error('获取趋势数据失败:', error)
@@ -303,9 +310,7 @@ export default {
       Object.values(this.charts).forEach(chart => {
         addResizeListener(chart)
       })
-
-      // 加载模拟数据渲染
-      this.loadMockData()
+      // 注意：不再调用loadMockData()，由initData()获取真实数据
     },
 
     // 渲染趋势图
@@ -358,7 +363,7 @@ export default {
     renderCategoryChart(data) {
       const pieData = (data || []).map(item => ({
         name: item.categoryName || item.name,
-        value: item.stockCount || item.value
+        value: item.quantity || item.stockCount || item.value
       }))
       
       const option = getPieOption({
@@ -371,9 +376,9 @@ export default {
 
     // 渲染预警柱状图
     renderWarningChart(data) {
-      const products = (data || []).map(item => item.productName || item.name)
+      const products = (data || []).map(item => item.skuName || item.productName || item.name)
       const stocks = (data || []).map(item => item.currentStock || item.value)
-      const safes = (data || []).map(item => item.safeStock || item.safe)
+      const safes = (data || []).map(item => item.safetyStock || item.safeStock || item.safe)
       
       const option = getBarOption({
         xAxis: {
@@ -429,8 +434,8 @@ export default {
 
     // 渲染TOP商品横向柱状图
     renderTopProductsChart(data) {
-      const products = (data || []).map(item => item.productName || item.name).reverse()
-      const sales = (data || []).map(item => item.salesCount || item.value).reverse()
+      const products = (data || []).map(item => item.skuName || item.productName || item.name).reverse()
+      const sales = (data || []).map(item => item.quantity || item.salesCount || item.value).reverse()
       
       const option = getHorizontalBarOption({
         yAxis: {
