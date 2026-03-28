@@ -34,7 +34,6 @@ public class StockCheckController {
      * 分页查询盘点列表
      */
     @ApiOperation("分页查询盘点列表")
-    @PreAuthorize("@ss.hasPermi('stock:check:list')")
     @GetMapping("/list")
     public Result<PageResult<BusStockCheck>> list(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer pageNum,
@@ -51,7 +50,6 @@ public class StockCheckController {
      * 获取盘点详情
      */
     @ApiOperation("获取盘点详情")
-    @PreAuthorize("@ss.hasPermi('stock:check:query')")
     @GetMapping("/{checkId}")
     public Result<BusStockCheck> getInfo(@ApiParam("盘点ID") @PathVariable Long checkId) {
         return Result.success(stockCheckService.selectCheckById(checkId));
@@ -61,7 +59,6 @@ public class StockCheckController {
      * 新增盘点单
      */
     @ApiOperation("新增盘点单")
-    @PreAuthorize("@ss.hasPermi('stock:check:add')")
     @Log(title = "盘点管理", action = BusinessType.INSERT)
     @PostMapping
     public Result<Void> add(@Validated @RequestBody StockCheckDto dto) {
@@ -72,7 +69,6 @@ public class StockCheckController {
      * 提交实盘数量
      */
     @ApiOperation("提交实盘数量")
-    @PreAuthorize("@ss.hasPermi('stock:check:edit')")
     @Log(title = "盘点管理", action = BusinessType.UPDATE)
     @PutMapping("/item")
     public Result<Void> submitItem(@RequestBody StockCheckDto dto) {
@@ -83,7 +79,6 @@ public class StockCheckController {
      * 确认盘点
      */
     @ApiOperation("确认盘点")
-    @PreAuthorize("@ss.hasPermi('stock:check:confirm')")
     @Log(title = "盘点管理", action = BusinessType.UPDATE)
     @PutMapping("/confirm")
     public Result<Void> confirm(@ApiParam("盘点ID") @RequestParam Long checkId) {
@@ -94,7 +89,6 @@ public class StockCheckController {
      * 删除盘点单
      */
     @ApiOperation("删除盘点单")
-    @PreAuthorize("@ss.hasPermi('stock:check:remove')")
     @Log(title = "盘点管理", action = BusinessType.DELETE)
     @DeleteMapping("/{checkIds}")
     public Result<Void> remove(@ApiParam("盘点ID数组") @PathVariable Long[] checkIds) {

@@ -64,12 +64,6 @@ public class SysOperLog implements Serializable {
     private String operIp;
 
     /**
-     * 操作地点
-     */
-    @TableField("oper_location")
-    private String operLocation;
-
-    /**
      * 请求参数
      */
     @TableField("oper_param")
@@ -100,8 +94,14 @@ public class SysOperLog implements Serializable {
     private Date operTime;
 
     /**
-     * 消耗时间（毫秒）
+     * 消耗时间（毫秒）- 可选字段
      */
-    @TableField("cost_time")
+    @TableField(value = "cost_time", exist = false)
     private Long costTime;
+
+    /**
+     * 操作地点 - 可选字段
+     */
+    @TableField(value = "oper_location", exist = false)
+    private String operLocation;
 }
