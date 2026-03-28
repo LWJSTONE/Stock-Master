@@ -256,7 +256,63 @@ export default {
     
     // 导出
     handleExport() {
-      this.$message.info('导出功能开发中')
+      if (this.list.length === 0) {
+        this.$message.warning('暂无数据可导出')
+        return
+      }
+      
+      // 定义导出列
+      const columns = [
+        { label: '仓库', prop: 'warehouseName' },
+        { label: 'SKU编码', prop: 'skuCode' },
+        { label: 'SKU名称', prop: 'skuName' },
+        { label: '可用库存', prop: 'availableQuantity' },
+        { label: '冻结库存', prop: 'lockedQuantity' },
+        { label: '总库存', prop: 'totalQuantity' },
+        { label: '批次号', prop: 'batchNo' },
+        { label: '库位', prop: 'location' },
+        { label: '最低库存', prop: 'minQuantity' },
+        { label: '库存状态', prop: 'status' }
+      ]
+      
+      // 构建CSV内容
+      const header = columns.map(col => col.label).join(',')
+      const rows = this.list.map(row => {
+        return columns.map(col => {
+          let value = row[col.prop]
+          if (col.prop === 'status') {
+            value = this.getStockStatusText(row)
+          }
+          // 处理包含逗号的值
+          if (typeof value === 'string' && value.includes(',')) {
+            value = `"${value}"`
+          }
+          return value ?? ''
+        }).join(',')
+      })
+      
+      const csvContent = '\uFEFF' + header + '\n' + rows.join('\n')
+      
+      // 创建Blob并下载
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', `库存数据_${this.formatDate(new Date())}.csv`)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      this.$message.success('导出成功')
+    },
+    
+    // 格式化日期
+    formatDate(date) {
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}${month}${day}`
     },
     
     // 调整库存
