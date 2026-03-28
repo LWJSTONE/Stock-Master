@@ -17,6 +17,7 @@ import com.graduation.inventory.business.mapper.StockMainMapper;
 import com.graduation.inventory.business.service.BusStockCheckService;
 import com.graduation.inventory.common.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,7 @@ import java.util.List;
  * @author graduation
  * @version 1.0.0
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BusStockCheckServiceImpl extends ServiceImpl<BusStockCheckMapper, BusStockCheck> implements BusStockCheckService {
@@ -137,41 +139,56 @@ public class BusStockCheckServiceImpl extends ServiceImpl<BusStockCheckMapper, B
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insertCheck(StockCheckDto dto) {
-        // 生成盘点单号
-        String checkNo = "CK" + System.currentTimeMillis();
-        
-        BusStockCheck check = new BusStockCheck();
-        check.setCheckNo(checkNo);
-        check.setWarehouseId(dto.getWarehouseId());
-        check.setCheckStatus(0); // 盘点中
-        check.setCreateTime(new Date());
-        check.setUpdateTime(new Date());
-        
-        // 保存主表
-        baseMapper.insert(check);
-        
-        // 生成盘点明细
-        if (dto.getSkuIds() != null && !dto.getSkuIds().isEmpty()) {
-            for (Long skuId : dto.getSkuIds()) {
-                // 查询当前库存
-                LambdaQueryWrapper<StockMain> wrapper = new LambdaQueryWrapper<>();
-                wrapper.eq(StockMain::getWarehouseId, dto.getWarehouseId());
-                wrapper.eq(StockMain::getSkuId, skuId);
-                StockMain stockMain = stockMainMapper.selectOne(wrapper);
-                
-                BusStockCheckItem item = new BusStockCheckItem();
-                item.setCheckId(check.getId());
-                item.setSkuId(skuId);
-                item.setSystemQty(stockMain != null ? stockMain.getQuantity() : BigDecimal.ZERO);
-                item.setActualQty(BigDecimal.ZERO);
-                item.setDiffQty(BigDecimal.ZERO);
-                item.setCreateTime(new Date());
-                item.setUpdateTime(new Date());
-                checkItemMapper.insert(item);
+        try {
+            log.info("开始创建盘点单，warehouseId={}, skuIds={}", dto.getWarehouseId(), dto.getSkuIds());
+            
+            // 生成盘点单号
+            String checkNo = "CK" + System.currentTimeMillis();
+            
+            BusStockCheck check = new BusStockCheck();
+            check.setCheckNo(checkNo);
+            check.setWarehouseId(dto.getWarehouseId());
+            check.setCheckStatus(0); // 盘点中
+            check.setCreateTime(new Date());
+            check.setUpdateTime(new Date());
+            
+            // 保存主表
+            int result = baseMapper.insert(check);
+            if (result <= 0) {
+                log.error("保存盘点主表失败");
+                throw new ServiceException("创建盘点单失败");
             }
+            log.info("盘点主表创建成功，checkId={}, checkNo={}", check.getId(), checkNo);
+            
+            // 生成盘点明细
+            if (dto.getSkuIds() != null && !dto.getSkuIds().isEmpty()) {
+                for (Long skuId : dto.getSkuIds()) {
+                    // 查询当前库存
+                    LambdaQueryWrapper<StockMain> wrapper = new LambdaQueryWrapper<>();
+                    wrapper.eq(StockMain::getWarehouseId, dto.getWarehouseId());
+                    wrapper.eq(StockMain::getSkuId, skuId);
+                    StockMain stockMain = stockMainMapper.selectOne(wrapper);
+                    
+                    BusStockCheckItem item = new BusStockCheckItem();
+                    item.setCheckId(check.getId());
+                    item.setSkuId(skuId);
+                    item.setSystemQty(stockMain != null ? stockMain.getQuantity() : BigDecimal.ZERO);
+                    item.setActualQty(BigDecimal.ZERO);
+                    item.setDiffQty(BigDecimal.ZERO);
+                    item.setCreateTime(new Date());
+                    item.setUpdateTime(new Date());
+                    checkItemMapper.insert(item);
+                }
+                log.info("创建盘点明细{}条", dto.getSkuIds().size());
+            }
+            
+            return true;
+        } catch (ServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("创建盘点单失败: {}", e.getMessage(), e);
+            throw new ServiceException("创建盘点单失败: " + e.getMessage());
         }
-        
-        return true;
     }
 
     @Override

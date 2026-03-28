@@ -24,6 +24,7 @@ import com.graduation.inventory.monitor.entity.vo.TopProductVo;
 import com.graduation.inventory.monitor.entity.vo.TrendVo;
 import com.graduation.inventory.monitor.service.DashboardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -47,6 +48,7 @@ import java.util.stream.Collectors;
  * @author graduation
  * @version 1.0.0
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DashboardServiceImpl implements DashboardService {
@@ -69,31 +71,34 @@ public class DashboardServiceImpl implements DashboardService {
             LambdaQueryWrapper<StockMain> stockWrapper = new LambdaQueryWrapper<>();
             List<StockMain> stockList = stockMainMapper.selectList(stockWrapper);
             BigDecimal totalStock = BigDecimal.ZERO;
-            if (stockList != null) {
+            if (stockList != null && !stockList.isEmpty()) {
                 totalStock = stockList.stream()
                         .map(StockMain::getQuantity)
                         .filter(q -> q != null)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
             }
             overview.setTotalStock(totalStock);
+            log.debug("总库存: {}", totalStock);
             
-            // 2. 统计SKU数量
+            // 2. 统计SKU数量（MyBatis-Plus的@TableLogic会自动处理逻辑删除）
             LambdaQueryWrapper<BaseProductSku> skuWrapper = new LambdaQueryWrapper<>();
-            skuWrapper.eq(BaseProductSku::getIsDeleted, 0);
             Long totalSku = skuMapper.selectCount(skuWrapper);
             overview.setTotalSku(totalSku != null ? totalSku.intValue() : 0);
+            log.debug("SKU数量: {}", totalSku);
             
             // 3. 统计待审核采购单数量
             LambdaQueryWrapper<BusPurchaseOrder> purchaseWrapper = new LambdaQueryWrapper<>();
             purchaseWrapper.eq(BusPurchaseOrder::getStatus, 0);
             Long pendingPurchase = purchaseOrderMapper.selectCount(purchaseWrapper);
             overview.setPendingPurchase(pendingPurchase != null ? pendingPurchase.intValue() : 0);
+            log.debug("待审核采购单: {}", pendingPurchase);
             
             // 4. 统计待审核销售单数量
             LambdaQueryWrapper<BusSaleOrder> saleWrapper = new LambdaQueryWrapper<>();
             saleWrapper.eq(BusSaleOrder::getStatus, 0);
             Long pendingSale = saleOrderMapper.selectCount(saleWrapper);
             overview.setPendingSale(pendingSale != null ? pendingSale.intValue() : 0);
+            log.debug("待审核销售单: {}", pendingSale);
             
             // 5. 设置待审核订单总数
             int totalPending = (pendingPurchase != null ? pendingPurchase.intValue() : 0) 
@@ -111,21 +116,22 @@ public class DashboardServiceImpl implements DashboardService {
                     .between(StockRecord::getCreateTime, startDate, endDate);
             List<StockRecord> inboundRecords = stockRecordMapper.selectList(inboundWrapper);
             BigDecimal todayInbound = BigDecimal.ZERO;
-            if (inboundRecords != null) {
+            if (inboundRecords != null && !inboundRecords.isEmpty()) {
                 todayInbound = inboundRecords.stream()
                         .map(StockRecord::getChangeQty)
                         .filter(q -> q != null)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
             }
             overview.setTodayInbound(todayInbound);
+            log.debug("今日入库: {}", todayInbound);
             
-            // 6. 统计今日出库
+            // 7. 统计今日出库
             LambdaQueryWrapper<StockRecord> outboundWrapper = new LambdaQueryWrapper<>();
             outboundWrapper.eq(StockRecord::getOrderType, 2) // 销售出库
                     .between(StockRecord::getCreateTime, startDate, endDate);
             List<StockRecord> outboundRecords = stockRecordMapper.selectList(outboundWrapper);
             BigDecimal todayOutbound = BigDecimal.ZERO;
-            if (outboundRecords != null) {
+            if (outboundRecords != null && !outboundRecords.isEmpty()) {
                 todayOutbound = outboundRecords.stream()
                         .map(StockRecord::getChangeQty)
                         .filter(q -> q != null)
@@ -133,8 +139,13 @@ public class DashboardServiceImpl implements DashboardService {
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
             }
             overview.setTodayOutbound(todayOutbound);
+            log.debug("今日出库: {}", todayOutbound);
+            
+            log.info("Dashboard概览数据: totalStock={}, totalSku={}, pendingOrders={}, todayInbound={}, todayOutbound={}", 
+                    totalStock, totalSku, totalPending, todayInbound, todayOutbound);
         } catch (Exception e) {
-            // 发生异常时返回默认值
+            // 发生异常时记录日志并返回默认值
+            log.error("获取Dashboard概览数据失败: {}", e.getMessage(), e);
             overview.setTotalStock(BigDecimal.ZERO);
             overview.setTotalSku(0);
             overview.setPendingPurchase(0);

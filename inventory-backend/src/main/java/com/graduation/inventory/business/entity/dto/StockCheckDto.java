@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -51,7 +52,7 @@ public class StockCheckDto implements Serializable {
      * SKU ID列表（选择参与盘点的商品）
      */
     @ApiModelProperty(value = "SKU ID列表", required = true)
-    @NotNull(message = "请选择要盘点的商品")
+    @NotEmpty(message = "请选择要盘点的商品")
     private List<Long> skuIds;
 
     /**
