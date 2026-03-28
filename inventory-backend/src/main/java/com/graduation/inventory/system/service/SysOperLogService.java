@@ -17,9 +17,8 @@ public interface SysOperLogService extends IService<SysOperLog> {
      * 新增操作日志
      *
      * @param operLog 操作日志信息
-     * @return 影响行数
      */
-    int insertOperLog(SysOperLog operLog);
+    void insertOperLog(SysOperLog operLog);
 
     /**
      * 分页查询日志列表

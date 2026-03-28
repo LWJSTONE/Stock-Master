@@ -33,6 +33,18 @@ public class SysRoleController {
     private final SysRoleService sysRoleService;
 
     /**
+     * 获取所有角色列表（下拉选择用）
+     *
+     * @return 角色列表
+     */
+    @ApiOperation("获取所有角色列表")
+    @GetMapping("/all")
+    public Result<List<SysRole>> all() {
+        List<SysRole> list = sysRoleService.selectRoleList(new SysRole());
+        return Result.success(list);
+    }
+
+    /**
      * 分页查询角色列表
      *
      * @param pageNum   页码

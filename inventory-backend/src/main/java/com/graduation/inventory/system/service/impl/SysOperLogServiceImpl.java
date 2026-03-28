@@ -35,13 +35,12 @@ public class SysOperLogServiceImpl extends ServiceImpl<SysOperLogMapper, SysOper
      * 新增操作日志
      *
      * @param operLog 操作日志信息
-     * @return 影响行数
      */
     @Override
     @Async
-    public int insertOperLog(SysOperLog operLog) {
+    public void insertOperLog(SysOperLog operLog) {
         if (operLog == null) {
-            return 0;
+            return;
         }
 
         // 设置操作时间
@@ -54,10 +53,8 @@ public class SysOperLogServiceImpl extends ServiceImpl<SysOperLogMapper, SysOper
             operLog.setStatus(0);
         }
 
-        int result = operLogMapper.insert(operLog);
+        operLogMapper.insert(operLog);
         log.debug("新增操作日志成功, 模块: {}", operLog.getTitle());
-
-        return result;
     }
 
     /**

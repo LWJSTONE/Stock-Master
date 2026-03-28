@@ -115,11 +115,13 @@ CREATE TABLE IF NOT EXISTS sys_oper_log (
     oper_name VARCHAR(50) DEFAULT NULL COMMENT '操作人员',
     oper_url VARCHAR(500) DEFAULT NULL COMMENT '请求URL',
     oper_ip VARCHAR(50) DEFAULT NULL COMMENT '主机地址',
+    oper_location VARCHAR(255) DEFAULT NULL COMMENT '操作地点',
     oper_param CLOB DEFAULT NULL COMMENT '请求参数',
     json_result CLOB DEFAULT NULL COMMENT '返回参数',
     status TINYINT DEFAULT 0 COMMENT '状态(0正常 1异常)',
     error_msg CLOB DEFAULT NULL COMMENT '错误消息',
     oper_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '操作时间',
+    cost_time BIGINT DEFAULT 0 COMMENT '消耗时间(毫秒)',
     PRIMARY KEY (id)
 );
 
@@ -256,6 +258,8 @@ CREATE TABLE IF NOT EXISTS stock_main (
     position VARCHAR(50) DEFAULT NULL COMMENT '库位',
     create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by VARCHAR(64) DEFAULT NULL COMMENT '创建人',
+    update_by VARCHAR(64) DEFAULT NULL COMMENT '更新人',
     PRIMARY KEY (id)
 );
 
