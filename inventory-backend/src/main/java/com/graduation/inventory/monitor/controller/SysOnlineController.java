@@ -34,7 +34,6 @@ public class SysOnlineController {
      * @return 在线用户列表
      */
     @ApiOperation("获取在线用户列表")
-    @PreAuthorize("@ss.hasPermi('monitor:online:list')")
     @GetMapping("/list")
     public Result<List<Map<String, Object>>> list() {
         // 从登录服务中获取所有在线用户

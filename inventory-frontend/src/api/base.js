@@ -294,3 +294,14 @@ export function getUnitList() {
     method: 'get'
   })
 }
+
+// ==================== 库存API ====================
+
+// 获取库存列表（用于盘点选择商品）
+export function getInventoryList(params) {
+  return request({
+    url: '/api/stock/main/list',
+    method: 'get',
+    params
+  })
+}

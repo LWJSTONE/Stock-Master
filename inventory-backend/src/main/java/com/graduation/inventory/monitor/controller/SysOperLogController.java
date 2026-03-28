@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,6 @@ public class SysOperLogController {
      * @return 操作日志列表
      */
     @ApiOperation("分页查询操作日志")
-    @PreAuthorize("@ss.hasPermi('monitor:operlog:list')")
     @GetMapping("/list")
     public Result<PageResult<SysOperLog>> list(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer pageNum,
@@ -60,9 +60,16 @@ public class SysOperLogController {
         List<SysOperLog> list = sysOperLogService.selectOperLogList(operLog);
         // 手动分页
         int start = (pageNum - 1) * pageSize;
-        int end = Math.min(start + pageSize, list.size());
-        List<SysOperLog> pageList = list.subList(start, end);
-        return Result.success(new PageResult<>(pageList, (long) list.size()));
+        List<SysOperLog> pageList;
+        if (list == null || list.isEmpty()) {
+            pageList = new ArrayList<>();
+        } else if (start >= list.size()) {
+            pageList = new ArrayList<>();
+        } else {
+            int end = Math.min(start + pageSize, list.size());
+            pageList = list.subList(start, end);
+        }
+        return Result.success(new PageResult<>(pageList, list != null ? (long) list.size() : 0L));
     }
 
     /**

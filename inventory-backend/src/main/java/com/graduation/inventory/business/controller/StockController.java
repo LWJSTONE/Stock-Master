@@ -34,7 +34,6 @@ public class StockController {
      * 分页查询实时库存
      */
     @ApiOperation("分页查询实时库存")
-    @PreAuthorize("@ss.hasPermi('stock:main:list')")
     @GetMapping("/main/list")
     public Result<Map<String, Object>> listStock(
             @ApiParam("页码") @RequestParam(defaultValue = "1") Integer pageNum,
