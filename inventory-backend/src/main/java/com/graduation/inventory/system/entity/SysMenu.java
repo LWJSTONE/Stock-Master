@@ -28,7 +28,7 @@ public class SysMenu extends BaseEntity {
     /**
      * 菜单名称
      */
-    @TableField("menu_name")
+    @TableField(value = "menu_name")
     private String menuName;
 
     /**
@@ -78,4 +78,10 @@ public class SysMenu extends BaseEntity {
      */
     @TableField("icon")
     private String icon;
+
+    /**
+     * 删除标志（0存在 1删除）
+     */
+    @TableField("del_flag")
+    private String delFlag;
 }

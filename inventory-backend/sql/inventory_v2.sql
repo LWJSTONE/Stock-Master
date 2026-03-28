@@ -91,7 +91,7 @@ CREATE TABLE `sys_menu` (
     `path` VARCHAR(200) DEFAULT NULL COMMENT '路由地址',
     `component` VARCHAR(200) DEFAULT NULL COMMENT '组件路径',
     `perms` VARCHAR(100) DEFAULT NULL COMMENT '权限标识',
-    `type` CHAR(1) DEFAULT '0' COMMENT '类型(M目录 C菜单 F按钮)',
+    `type` CHAR(1) DEFAULT 'M' COMMENT '类型(M目录 C菜单 F按钮)',
     `order_num` INT DEFAULT 0 COMMENT '显示顺序',
     `visible` CHAR(1) DEFAULT '0' COMMENT '是否显示(0显示 1隐藏)',
     `status` CHAR(1) DEFAULT '0' COMMENT '状态(0正常 1停用)',
