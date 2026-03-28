@@ -55,28 +55,28 @@
       :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       style="width: 100%"
     >
-      <el-table-column prop="name" label="菜单名称" min-width="180" />
+      <el-table-column prop="menuName" label="菜单名称" min-width="180" />
       <el-table-column prop="icon" label="图标" width="80" align="center">
         <template slot-scope="scope">
           <i v-if="scope.row.icon" :class="scope.row.icon" style="font-size: 18px" />
           <span v-else>-</span>
         </template>
       </el-table-column>
-      <el-table-column prop="sort" label="排序" width="80" align="center" />
+      <el-table-column prop="orderNum" label="排序" width="80" align="center" />
       <el-table-column prop="path" label="路由地址" min-width="150" />
       <el-table-column prop="component" label="组件路径" min-width="180" />
       <el-table-column prop="permission" label="权限标识" min-width="150" />
       <el-table-column prop="type" label="类型" width="100" align="center">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.type === 1" type="primary">目录</el-tag>
-          <el-tag v-else-if="scope.row.type === 2" type="success">菜单</el-tag>
+          <el-tag v-if="scope.row.type === 'M'" type="primary">目录</el-tag>
+          <el-tag v-else-if="scope.row.type === 'C'" type="success">菜单</el-tag>
           <el-tag v-else type="warning">按钮</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="status" label="状态" width="80" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status === 1 ? 'success' : 'danger'">
-            {{ scope.row.status === 1 ? '启用' : '禁用' }}
+          <el-tag :type="scope.row.status === '0' ? 'success' : 'danger'">
+            {{ scope.row.status === '0' ? '启用' : '禁用' }}
           </el-tag>
         </template>
       </el-table-column>
@@ -124,7 +124,7 @@
               <el-cascader
                 v-model="form.parentId"
                 :options="menuOptions"
-                :props="{ value: 'id', label: 'name', checkStrictly: true, emitPath: false }"
+                :props="{ value: 'id', label: 'menuName', checkStrictly: true, emitPath: false }"
                 placeholder="请选择上级菜单"
                 style="width: 100%"
                 clearable
@@ -134,18 +134,18 @@
           <el-col :span="24">
             <el-form-item label="菜单类型" prop="type">
               <el-radio-group v-model="form.type">
-                <el-radio :label="1">目录</el-radio>
-                <el-radio :label="2">菜单</el-radio>
-                <el-radio :label="3">按钮</el-radio>
+                <el-radio label="M">目录</el-radio>
+                <el-radio label="C">菜单</el-radio>
+                <el-radio label="F">按钮</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="菜单名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入菜单名称" />
+            <el-form-item label="菜单名称" prop="menuName">
+              <el-input v-model="form.menuName" placeholder="请输入菜单名称" />
             </el-form-item>
           </el-col>
-          <el-col v-if="form.type !== 3" :span="12">
+          <el-col v-if="form.type !== 'F'" :span="12">
             <el-form-item label="菜单图标" prop="icon">
               <el-popover
                 v-model="showIconSelect"
@@ -178,55 +178,55 @@
               </el-popover>
             </el-form-item>
           </el-col>
-          <el-col v-if="form.type !== 3" :span="12">
+          <el-col v-if="form.type !== 'F'" :span="12">
             <el-form-item label="路由地址" prop="path">
               <el-input v-model="form.path" placeholder="请输入路由地址" />
             </el-form-item>
           </el-col>
-          <el-col v-if="form.type === 2" :span="12">
+          <el-col v-if="form.type === 'C'" :span="12">
             <el-form-item label="组件路径" prop="component">
               <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
           </el-col>
-          <el-col v-if="form.type === 3" :span="12">
-            <el-form-item label="权限标识" prop="permission">
-              <el-input v-model="form.permission" placeholder="请输入权限标识" />
+          <el-col v-if="form.type === 'F'" :span="12">
+            <el-form-item label="权限标识" prop="perms">
+              <el-input v-model="form.perms" placeholder="请输入权限标识" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="排序" prop="sort">
-              <el-input-number v-model="form.sort" :min="0" :max="999" />
+            <el-form-item label="排序" prop="orderNum">
+              <el-input-number v-model="form.orderNum" :min="0" :max="999" />
             </el-form-item>
           </el-col>
-          <el-col v-if="form.type !== 3" :span="12">
+          <el-col v-if="form.type !== 'F'" :span="12">
             <el-form-item label="是否外链" prop="isExternal">
               <el-radio-group v-model="form.isExternal">
-                <el-radio :label="1">是</el-radio>
-                <el-radio :label="0">否</el-radio>
+                <el-radio label="1">是</el-radio>
+                <el-radio label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col v-if="form.type !== 3" :span="12">
+          <el-col v-if="form.type !== 'F'" :span="12">
             <el-form-item label="是否缓存" prop="isCache">
               <el-radio-group v-model="form.isCache">
-                <el-radio :label="1">是</el-radio>
-                <el-radio :label="0">否</el-radio>
+                <el-radio label="1">是</el-radio>
+                <el-radio label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col v-if="form.type !== 3" :span="12">
-            <el-form-item label="是否可见" prop="isVisible">
-              <el-radio-group v-model="form.isVisible">
-                <el-radio :label="1">是</el-radio>
-                <el-radio :label="0">否</el-radio>
+          <el-col v-if="form.type !== 'F'" :span="12">
+            <el-form-item label="是否可见" prop="visible">
+              <el-radio-group v-model="form.visible">
+                <el-radio label="0">是</el-radio>
+                <el-radio label="1">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="状态" prop="status">
               <el-radio-group v-model="form.status">
-                <el-radio :label="1">启用</el-radio>
-                <el-radio :label="0">禁用</el-radio>
+                <el-radio label="0">启用</el-radio>
+                <el-radio label="1">禁用</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -271,20 +271,20 @@ export default {
       form: {
         id: null,
         parentId: null,
-        name: '',
+        menuName: '',
         path: '',
         component: '',
-        permission: '',
-        type: 1,
+        perms: '',
+        type: 'M',
         icon: '',
-        sort: 0,
-        isExternal: 0,
-        isCache: 0,
-        isVisible: 1,
-        status: 1
+        orderNum: 0,
+        isExternal: '0',
+        isCache: '0',
+        visible: '0',
+        status: '0'
       },
       rules: {
-        name: [
+        menuName: [
           { required: true, message: '请输入菜单名称', trigger: 'blur' }
         ],
         type: [
@@ -451,7 +451,7 @@ export default {
       this.isEdit = false
       if (row) {
         this.form.parentId = row.id
-        this.form.type = row.type === 3 ? 3 : 2
+        this.form.type = row.type === 'F' ? 'F' : 'C'
       }
       this.dialogVisible = true
     },
@@ -523,17 +523,17 @@ export default {
       this.form = {
         id: null,
         parentId: null,
-        name: '',
+        menuName: '',
         path: '',
         component: '',
-        permission: '',
-        type: 1,
+        perms: '',
+        type: 'M',
         icon: '',
-        sort: 0,
-        isExternal: 0,
-        isCache: 0,
-        isVisible: 1,
-        status: 1
+        orderNum: 0,
+        isExternal: '0',
+        isCache: '0',
+        visible: '0',
+        status: '0'
       }
     }
   }

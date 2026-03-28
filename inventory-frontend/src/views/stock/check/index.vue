@@ -14,7 +14,7 @@
         v-model="listQuery.warehouseId"
         placeholder="仓库"
         clearable
-        style="width: 150px"
+        style="width: 180px"
         class="filter-item"
       >
         <el-option
@@ -28,7 +28,7 @@
         v-model="listQuery.status"
         placeholder="状态"
         clearable
-        style="width: 120px"
+        style="width: 140px"
         class="filter-item"
       >
         <el-option label="待盘点" :value="0" />
@@ -112,22 +112,49 @@
     />
 
     <!-- 新增盘点弹窗 -->
-    <el-dialog title="新增盘点单" :visible.sync="createVisible" width="500px">
+    <el-dialog title="新增盘点单" :visible.sync="createVisible" width="800px">
       <el-form ref="createForm" :model="createForm" :rules="createRules" label-width="100px">
-        <el-form-item label="盘点单号" prop="checkNo">
-          <el-input v-model="createForm.checkNo" placeholder="自动生成" disabled />
-        </el-form-item>
-        <el-form-item label="盘点仓库" prop="warehouseId">
-          <el-select v-model="createForm.warehouseId" placeholder="请选择仓库" style="width: 100%">
-            <el-option
-              v-for="item in warehouseOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="盘点单号" prop="checkNo">
+              <el-input v-model="createForm.checkNo" placeholder="自动生成" disabled />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="盘点仓库" prop="warehouseId">
+              <el-select v-model="createForm.warehouseId" placeholder="请选择仓库" style="width: 100%" @change="handleWarehouseChange">
+                <el-option
+                  v-for="item in warehouseOptions"
+                  :key="item.id"
+                  :label="item.whName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        
+        <!-- 商品选择 -->
+        <el-divider content-position="left">选择盘点商品</el-divider>
+        <el-table 
+          ref="skuTable"
+          :data="availableSkuList" 
+          border 
+          style="width: 100%"
+          max-height="300"
+          @selection-change="handleSkuSelectionChange"
+        >
+          <el-table-column type="selection" width="50" />
+          <el-table-column prop="skuCode" label="SKU编码" width="140" />
+          <el-table-column prop="skuName" label="商品名称" min-width="150" />
+          <el-table-column prop="specValues" label="规格" width="100" />
+          <el-table-column prop="quantity" label="当前库存" width="100" />
+        </el-table>
+        <div style="margin-top: 10px; color: #909399;">
+          已选择 <span style="color: #409EFF;">{{ selectedSkuIds.length }}</span> 个商品
+        </div>
+        
+        <el-form-item label="备注" prop="remark" style="margin-top: 15px;">
           <el-input v-model="createForm.remark" type="textarea" :rows="2" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
@@ -233,11 +260,15 @@ export default {
       createForm: {
         checkNo: '',
         warehouseId: '',
+        skuIds: [],
         remark: ''
       },
       createRules: {
         warehouseId: [{ required: true, message: '请选择仓库', trigger: 'change' }]
       },
+      // SKU选择
+      availableSkuList: [],
+      selectedSkuIds: [],
       // 详情
       detailVisible: false,
       detailData: {},
@@ -351,9 +382,32 @@ export default {
       this.createForm = {
         checkNo: 'PD' + new Date().getTime(),
         warehouseId: '',
+        skuIds: [],
         remark: ''
       }
+      this.availableSkuList = []
+      this.selectedSkuIds = []
       this.createVisible = true
+    },
+    
+    // 仓库变化时加载商品
+    async handleWarehouseChange(warehouseId) {
+      if (!warehouseId) {
+        this.availableSkuList = []
+        return
+      }
+      // TODO: 根据仓库加载库存商品
+      // 模拟数据
+      this.availableSkuList = [
+        { id: 1, skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', specValues: '红色,L', quantity: 100 },
+        { id: 2, skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', specValues: '蓝色,M', quantity: 200 },
+        { id: 3, skuCode: 'PRD003-2L', skuName: '洗衣液-2L', specValues: '2L', quantity: 50 }
+      ]
+    },
+    
+    // 商品选择变化
+    handleSkuSelectionChange(selection) {
+      this.selectedSkuIds = selection.map(item => item.id)
     },
     
     // 确认新增
@@ -361,9 +415,18 @@ export default {
       this.$refs.createForm.validate(async valid => {
         if (!valid) return
         
+        if (this.selectedSkuIds.length === 0) {
+          this.$message.warning('请选择要盘点的商品')
+          return
+        }
+        
         this.createLoading = true
         try {
-          await createCheck(this.createForm)
+          const data = {
+            ...this.createForm,
+            skuIds: this.selectedSkuIds
+          }
+          await createCheck(data)
           this.$message.success('创建成功')
           this.createVisible = false
           this.getList()

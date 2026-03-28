@@ -13,7 +13,7 @@
       <el-input
         v-model="listQuery.contact"
         placeholder="联系人"
-        style="width: 150px"
+        style="width: 180px"
         class="filter-item"
         clearable
         @keyup.enter.native="handleFilter"
@@ -28,9 +28,9 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="list" border style="width: 100%">
-      <el-table-column prop="code" label="编码" width="120" />
-      <el-table-column prop="name" label="客户名称" min-width="150" />
-      <el-table-column prop="contact" label="联系人" width="100" />
+      <el-table-column prop="custCode" label="编码" width="120" />
+      <el-table-column prop="custName" label="客户名称" min-width="150" />
+      <el-table-column prop="contactPerson" label="联系人" width="100" />
       <el-table-column prop="phone" label="联系电话" width="130" />
       <el-table-column prop="address" label="地址" min-width="200" />
       <el-table-column prop="status" label="状态" width="100">
@@ -67,20 +67,20 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="客户编码" prop="code">
-              <el-input v-model="form.code" placeholder="请输入客户编码" />
+            <el-form-item label="客户编码" prop="custCode">
+              <el-input v-model="form.custCode" placeholder="请输入客户编码" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="客户名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入客户名称" />
+            <el-form-item label="客户名称" prop="custName">
+              <el-input v-model="form.custName" placeholder="请输入客户名称" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="联系人" prop="contact">
-              <el-input v-model="form.contact" placeholder="请输入联系人姓名" />
+            <el-form-item label="联系人" prop="contactPerson">
+              <el-input v-model="form.contactPerson" placeholder="请输入联系人姓名" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -157,9 +157,9 @@ export default {
       submitLoading: false,
       form: {
         id: null,
-        code: '',
-        name: '',
-        contact: '',
+        custCode: '',
+        custName: '',
+        contactPerson: '',
         phone: '',
         address: '',
         email: '',
@@ -169,9 +169,9 @@ export default {
         remark: ''
       },
       rules: {
-        code: [{ required: true, message: '请输入客户编码', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
-        contact: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
+        custCode: [{ required: true, message: '请输入客户编码', trigger: 'blur' }],
+        custName: [{ required: true, message: '请输入客户名称', trigger: 'blur' }],
+        contactPerson: [{ required: true, message: '请输入联系人', trigger: 'blur' }],
         phone: [
           { required: true, message: '请输入联系电话', trigger: 'blur' },
           { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
@@ -279,9 +279,9 @@ export default {
     resetForm() {
       this.form = {
         id: null,
-        code: '',
-        name: '',
-        contact: '',
+        custCode: '',
+        custName: '',
+        contactPerson: '',
         phone: '',
         address: '',
         email: '',

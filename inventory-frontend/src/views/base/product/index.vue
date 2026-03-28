@@ -14,7 +14,7 @@
         v-model="listQuery.categoryId"
         placeholder="商品分类"
         clearable
-        style="width: 150px"
+        style="width: 180px"
         class="filter-item"
       >
         <el-option
@@ -28,7 +28,7 @@
         v-model="listQuery.status"
         placeholder="状态"
         clearable
-        style="width: 120px"
+        style="width: 140px"
         class="filter-item"
       >
         <el-option label="启用" :value="1" />
@@ -44,8 +44,8 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="list" border style="width: 100%">
-      <el-table-column prop="code" label="商品编码" width="120" />
-      <el-table-column prop="name" label="商品名称" min-width="150" />
+      <el-table-column prop="spuCode" label="商品编码" width="120" />
+      <el-table-column prop="spuName" label="商品名称" min-width="150" />
       <el-table-column prop="categoryName" label="分类" width="120" />
       <el-table-column prop="brandName" label="品牌" width="120" />
       <el-table-column prop="unit" label="单位" width="80" />
@@ -83,13 +83,13 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="商品编码" prop="code">
-              <el-input v-model="form.code" placeholder="请输入商品编码" />
+            <el-form-item label="商品编码" prop="spuCode">
+              <el-input v-model="form.spuCode" placeholder="请输入商品编码" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="商品名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入商品名称" />
+            <el-form-item label="商品名称" prop="spuName">
+              <el-input v-model="form.spuName" placeholder="请输入商品名称" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -317,17 +317,17 @@ export default {
       submitLoading: false,
       form: {
         id: null,
-        code: '',
-        name: '',
+        spuCode: '',
+        spuName: '',
         categoryId: '',
-        brandId: '',
+        brand: '',
         unit: '',
         status: 1,
         description: ''
       },
       rules: {
-        code: [{ required: true, message: '请输入商品编码', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+        spuCode: [{ required: true, message: '请输入商品编码', trigger: 'blur' }],
+        spuName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
         categoryId: [{ required: true, message: '请选择分类', trigger: 'change' }],
         unit: [{ required: true, message: '请选择单位', trigger: 'change' }]
       },
@@ -465,10 +465,10 @@ export default {
     resetForm() {
       this.form = {
         id: null,
-        code: '',
-        name: '',
+        spuCode: '',
+        spuName: '',
         categoryId: '',
-        brandId: '',
+        brand: '',
         unit: '',
         status: 1,
         description: ''

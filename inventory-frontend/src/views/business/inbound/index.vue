@@ -13,7 +13,7 @@
         v-model="listQuery.warehouseId"
         placeholder="选择仓库"
         clearable
-        style="width: 150px"
+        style="width: 180px"
         class="filter-item"
       >
         <el-option

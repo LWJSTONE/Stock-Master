@@ -5,7 +5,7 @@
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
         <el-form-item label="角色名称">
           <el-input
-            v-model="listQuery.name"
+            v-model="listQuery.roleName"
             placeholder="请输入角色名称"
             style="width: 200px"
             clearable
@@ -13,7 +13,7 @@
           />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="listQuery.status" placeholder="请选择状态" style="width: 150px" clearable>
+          <el-select v-model="listQuery.status" placeholder="请选择状态" style="width: 180px" clearable>
             <el-option label="启用" :value="1" />
             <el-option label="禁用" :value="0" />
           </el-select>
@@ -119,8 +119,8 @@
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
-      :page-size="listQuery.size"
-      :current-page="listQuery.page"
+      :page-size="listQuery.pageSize"
+      :current-page="listQuery.pageNum"
       :page-sizes="[10, 20, 50, 100]"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -134,6 +134,9 @@
         </el-form-item>
         <el-form-item label="权限字符" prop="roleKey">
           <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
+          <div style="color: #909399; font-size: 12px; line-height: 1.5; margin-top: 5px;">
+            权限字符用于系统权限控制，建议使用英文小写字母，如：admin、user、warehouse、finance等
+          </div>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
@@ -200,9 +203,9 @@ export default {
       total: 0,
       listLoading: false,
       listQuery: {
-        page: 1,
-        size: 10,
-        name: '',
+        pageNum: 1,
+        pageSize: 10,
+        roleName: '',
         status: null
       },
       multipleSelection: [],
@@ -256,16 +259,16 @@ export default {
 
     // 搜索
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.pageNum = 1
       this.getList()
     },
 
     // 重置搜索
     handleReset() {
       this.listQuery = {
-        page: 1,
-        size: 10,
-        name: '',
+        pageNum: 1,
+        pageSize: 10,
+        roleName: '',
         status: null
       }
       this.getList()
@@ -435,13 +438,13 @@ export default {
 
     // 分页
     handleCurrentChange(val) {
-      this.listQuery.page = val
+      this.listQuery.pageNum = val
       this.getList()
     },
 
     handleSizeChange(val) {
-      this.listQuery.size = val
-      this.listQuery.page = 1
+      this.listQuery.pageSize = val
+      this.listQuery.pageNum = 1
       this.getList()
     }
   }

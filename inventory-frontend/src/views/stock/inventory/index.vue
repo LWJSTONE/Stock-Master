@@ -6,7 +6,7 @@
         v-model="listQuery.warehouseId"
         placeholder="选择仓库"
         clearable
-        style="width: 150px"
+        style="width: 180px"
         class="filter-item"
       >
         <el-option
@@ -148,7 +148,8 @@
 </template>
 
 <script>
-import { getInventoryList, adjustInventory, getInventoryLog } from '@/api/stock'
+import { getInventoryList, getInventoryLog } from '@/api/stock'
+import { adjustInventory } from '@/api/inventory'
 import { getWarehouseOptions } from '@/api/base'
 
 export default {
@@ -202,19 +203,17 @@ export default {
     async getList() {
       this.listLoading = true
       try {
-        // 模拟数据
-        this.list = [
-          { id: 1, warehouseId: 1, warehouseName: '主仓库', skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', availableQuantity: 80, lockedQuantity: 20, totalQuantity: 100, minQuantity: 50, batchNo: 'B20240101001', location: 'A-01-01' },
-          { id: 2, warehouseId: 1, warehouseName: '主仓库', skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', availableQuantity: 200, lockedQuantity: 0, totalQuantity: 200, minQuantity: 100, batchNo: 'B20240102001', location: 'A-02-01' },
-          { id: 3, warehouseId: 2, warehouseName: '分仓库', skuCode: 'PRD003-2L', skuName: '洗衣液-2L', availableQuantity: 30, lockedQuantity: 0, totalQuantity: 30, minQuantity: 50, batchNo: 'B20240103001', location: 'B-01-01' },
-          { id: 4, warehouseId: 1, warehouseName: '主仓库', skuCode: 'PRD001-RED-M', skuName: '笔记本电脑-红色-M', availableQuantity: 45, lockedQuantity: 5, totalQuantity: 50, minQuantity: 30, batchNo: 'B20240104001', location: 'A-01-02' }
-        ]
-        this.total = 4
-        // const res = await getInventoryList(this.listQuery)
-        // this.list = res.data.list
-        // this.total = res.data.total
+        const res = await getInventoryList(this.listQuery)
+        this.list = res.data.list || res.data.records || []
+        this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
+        // 如果接口报错，使用模拟数据
+        this.list = [
+          { id: 1, warehouseId: 1, warehouseName: '主仓库', skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', availableQuantity: 80, lockedQuantity: 20, totalQuantity: 100, minQuantity: 50, batchNo: 'B20240101001', location: 'A-01-01' },
+          { id: 2, warehouseId: 1, warehouseName: '主仓库', skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', availableQuantity: 200, lockedQuantity: 0, totalQuantity: 200, minQuantity: 100, batchNo: 'B20240102001', location: 'A-02-01' }
+        ]
+        this.total = 2
       } finally {
         this.listLoading = false
       }

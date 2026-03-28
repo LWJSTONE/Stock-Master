@@ -14,7 +14,7 @@
         v-model="listQuery.supplierId"
         placeholder="供应商"
         clearable
-        style="width: 150px"
+        style="width: 180px"
         class="filter-item"
       >
         <el-option
@@ -28,7 +28,7 @@
         v-model="listQuery.status"
         placeholder="状态"
         clearable
-        style="width: 120px"
+        style="width: 140px"
         class="filter-item"
       >
         <el-option label="待审核" :value="0" />
@@ -170,25 +170,25 @@
           <el-table-column prop="skuName" label="商品名称" min-width="150" />
           <el-table-column prop="specValues" label="规格" width="120" />
           <el-table-column prop="unit" label="单位" width="80" />
-          <el-table-column prop="price" label="单价" width="100">
+          <el-table-column prop="price" label="单价" width="140">
             <template slot-scope="scope">
               <el-input-number 
                 v-model="scope.row.price" 
                 :min="0" 
                 :precision="2" 
                 size="small" 
-                style="width: 100%"
+                style="width: 120px"
                 @change="calculateAmount(scope.row)"
               />
             </template>
           </el-table-column>
-          <el-table-column prop="quantity" label="数量" width="100">
+          <el-table-column prop="quantity" label="数量" width="140">
             <template slot-scope="scope">
               <el-input-number 
                 v-model="scope.row.quantity" 
                 :min="1" 
                 size="small" 
-                style="width: 100%"
+                style="width: 120px"
                 @change="calculateAmount(scope.row)"
               />
             </template>
@@ -412,7 +412,12 @@ export default {
     async getList() {
       this.listLoading = true
       try {
-        // 模拟数据
+        const res = await getPurchaseList(this.listQuery)
+        this.list = res.data.list || res.data.records || []
+        this.total = res.data.total || 0
+      } catch (error) {
+        console.error(error)
+        // 如果接口报错，使用模拟数据
         this.list = [
           { 
             id: 1, 
@@ -428,42 +433,9 @@ export default {
             items: [
               { skuCode: 'PRD001-RED-L', skuName: '笔记本电脑-红色-L', specValues: '红色,L', unit: '台', price: 5999, quantity: 10, amount: 59990 }
             ]
-          },
-          { 
-            id: 2, 
-            orderNo: 'PO202401020001', 
-            supplierId: 2,
-            supplierName: '供应商B', 
-            totalAmount: 79980, 
-            status: 1, 
-            applicant: '李四',
-            expectedDate: '2024-01-12',
-            createTime: '2024-01-02 10:00:00',
-            remark: '',
-            items: [
-              { skuCode: 'PRD002-BLUE-M', skuName: '智能手机-蓝色-M', specValues: '蓝色,M', unit: '台', price: 3999, quantity: 20, amount: 79980 }
-            ]
-          },
-          { 
-            id: 3, 
-            orderNo: 'PO202401030001', 
-            supplierId: 1,
-            supplierName: '供应商A', 
-            totalAmount: 11990, 
-            status: 2, 
-            applicant: '王五',
-            expectedDate: '2024-01-08',
-            createTime: '2024-01-03 11:00:00',
-            remark: '已入库',
-            items: []
           }
         ]
-        this.total = 3
-        // const res = await getPurchaseList(this.listQuery)
-        // this.list = res.data.list
-        // this.total = res.data.total
-      } catch (error) {
-        console.error(error)
+        this.total = 1
       } finally {
         this.listLoading = false
       }

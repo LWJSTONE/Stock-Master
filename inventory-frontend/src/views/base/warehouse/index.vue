@@ -30,10 +30,10 @@
 
     <!-- 表格 -->
     <el-table v-loading="listLoading" :data="list" border style="width: 100%">
-      <el-table-column prop="code" label="仓库编码" width="120" />
-      <el-table-column prop="name" label="仓库名称" min-width="150" />
+      <el-table-column prop="whCode" label="仓库编码" width="120" />
+      <el-table-column prop="whName" label="仓库名称" min-width="150" />
       <el-table-column prop="address" label="地址" min-width="200" />
-      <el-table-column prop="manager" label="负责人" width="100" />
+      <el-table-column prop="principal" label="负责人" width="100" />
       <el-table-column prop="phone" label="联系电话" width="130" />
       <el-table-column prop="status" label="状态" width="100">
         <template slot-scope="scope">
@@ -69,13 +69,13 @@
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="仓库编码" prop="code">
-              <el-input v-model="form.code" placeholder="请输入仓库编码" />
+            <el-form-item label="仓库编码" prop="whCode">
+              <el-input v-model="form.whCode" placeholder="请输入仓库编码" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="仓库名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入仓库名称" />
+            <el-form-item label="仓库名称" prop="whName">
+              <el-input v-model="form.whName" placeholder="请输入仓库名称" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -84,8 +84,8 @@
         </el-form-item>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="负责人" prop="manager">
-              <el-input v-model="form.manager" placeholder="请输入负责人姓名" />
+            <el-form-item label="负责人" prop="principal">
+              <el-input v-model="form.principal" placeholder="请输入负责人姓名" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -145,20 +145,20 @@ export default {
       submitLoading: false,
       form: {
         id: null,
-        code: '',
-        name: '',
+        whCode: '',
+        whName: '',
         address: '',
-        manager: '',
+        principal: '',
         phone: '',
         area: '',
         status: 1,
         remark: ''
       },
       rules: {
-        code: [{ required: true, message: '请输入仓库编码', trigger: 'blur' }],
-        name: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
+        whCode: [{ required: true, message: '请输入仓库编码', trigger: 'blur' }],
+        whName: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
         address: [{ required: true, message: '请输入仓库地址', trigger: 'blur' }],
-        manager: [{ required: true, message: '请输入负责人', trigger: 'blur' }],
+        principal: [{ required: true, message: '请输入负责人', trigger: 'blur' }],
         phone: [
           { required: true, message: '请输入联系电话', trigger: 'blur' },
           { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
@@ -263,10 +263,10 @@ export default {
     resetForm() {
       this.form = {
         id: null,
-        code: '',
-        name: '',
+        whCode: '',
+        whName: '',
         address: '',
-        manager: '',
+        principal: '',
         phone: '',
         area: '',
         status: 1,

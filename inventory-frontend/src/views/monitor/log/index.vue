@@ -123,8 +123,8 @@
       background
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
-      :page-size="listQuery.size"
-      :current-page="listQuery.page"
+      :page-size="listQuery.pageSize"
+      :current-page="listQuery.pageNum"
       :page-sizes="[10, 20, 50, 100]"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -239,8 +239,8 @@ export default {
       total: 0,
       listLoading: false,
       listQuery: {
-        page: 1,
-        size: 10,
+        pageNum: 1,
+        pageSize: 10,
         module: '',
         operator: '',
         operateType: '',
@@ -279,15 +279,15 @@ export default {
 
     // 搜索
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.pageNum = 1
       this.getList()
     },
 
     // 重置搜索
     handleReset() {
       this.listQuery = {
-        page: 1,
-        size: 10,
+        pageNum: 1,
+        pageSize: 10,
         module: '',
         operator: '',
         operateType: '',
@@ -379,13 +379,13 @@ export default {
 
     // 分页
     handleCurrentChange(val) {
-      this.listQuery.page = val
+      this.listQuery.pageNum = val
       this.getList()
     },
 
     handleSizeChange(val) {
-      this.listQuery.size = val
-      this.listQuery.page = 1
+      this.listQuery.pageSize = val
+      this.listQuery.pageNum = 1
       this.getList()
     }
   }
