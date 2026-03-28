@@ -39,8 +39,6 @@ public class DashboardController {
      * @return 概览数据
      */
     @ApiOperation("获取概览数据")
-    @PreAuthorize("@ss.hasPermi('monitor:dashboard:query')")
-    @Log(title = "数据大屏", action = BusinessType.OTHER)
     @GetMapping("/overview")
     public Result<OverviewVo> getOverview() {
         return Result.success(dashboardService.getOverview());
@@ -52,8 +50,6 @@ public class DashboardController {
      * @return 趋势数据列表
      */
     @ApiOperation("获取出入库趋势")
-    @PreAuthorize("@ss.hasPermi('monitor:dashboard:query')")
-    @Log(title = "数据大屏", action = BusinessType.OTHER)
     @GetMapping("/trend")
     public Result<List<TrendVo>> getTrend() {
         return Result.success(dashboardService.getInboundOutboundTrend());
@@ -65,8 +61,6 @@ public class DashboardController {
      * @return 分类占比列表
      */
     @ApiOperation("获取分类库存占比")
-    @PreAuthorize("@ss.hasPermi('monitor:dashboard:query')")
-    @Log(title = "数据大屏", action = BusinessType.OTHER)
     @GetMapping("/category")
     public Result<List<CategoryRatioVo>> getCategory() {
         return Result.success(dashboardService.getCategoryStockRatio());
@@ -78,8 +72,6 @@ public class DashboardController {
      * @return 预警列表
      */
     @ApiOperation("获取库存预警")
-    @PreAuthorize("@ss.hasPermi('monitor:dashboard:query')")
-    @Log(title = "数据大屏", action = BusinessType.OTHER)
     @GetMapping("/warning")
     public Result<List<StockWarningVo>> getWarning() {
         return Result.success(dashboardService.getStockWarningList());
@@ -91,8 +83,6 @@ public class DashboardController {
      * @return TOP商品列表
      */
     @ApiOperation("获取TOP商品")
-    @PreAuthorize("@ss.hasPermi('monitor:dashboard:query')")
-    @Log(title = "数据大屏", action = BusinessType.OTHER)
     @GetMapping("/topProducts")
     public Result<List<TopProductVo>> getTopProducts() {
         return Result.success(dashboardService.getTopProducts());

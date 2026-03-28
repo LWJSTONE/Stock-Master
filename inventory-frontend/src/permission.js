@@ -34,8 +34,10 @@ router.beforeEach(async(to, from, next) => {
           // 根据角色生成动态路由
           const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
 
-          // 动态添加路由
-          router.addRoutes(accessRoutes)
+          // 动态添加路由（使用addRoute替代已弃用的addRoutes）
+          accessRoutes.forEach(route => {
+            router.addRoute(route)
+          })
 
           // hack方法 确保addRoutes已完成
           next({ ...to, replace: true })
