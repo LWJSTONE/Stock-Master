@@ -9,17 +9,22 @@
       <breadcrumb class="breadcrumb-container" />
     </div>
     <div class="right-menu">
-      <el-dropdown class="avatar-container" trigger="click">
+      <el-dropdown class="avatar-container" trigger="click" placement="bottom-end">
         <div class="avatar-wrapper">
           <img :src="avatar" class="user-avatar" />
-          <i class="el-icon-caret-bottom" />
+          <span class="user-name">{{ userName }}</span>
+          <i class="el-icon-arrow-down el-icon--right" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item> 首页 </el-dropdown-item>
+            <el-dropdown-item>
+              <i class="el-icon-s-home"></i>
+              首页
+            </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided @click.native="logout">
-            <span style="display: block">退出登录</span>
+            <i class="el-icon-switch-button"></i>
+            <span>退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -38,7 +43,10 @@ export default {
     Hamburger
   },
   computed: {
-    ...mapGetters(['sidebar', 'avatar'])
+    ...mapGetters(['sidebar', 'avatar', 'name']),
+    userName() {
+      return this.name || 'Admin'
+    }
   },
   methods: {
     toggleSideBar() {
@@ -91,36 +99,98 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
-    line-height: $navbar-height;
+    display: flex;
+    align-items: center;
 
     &:focus {
       outline: none;
     }
 
     .avatar-container {
-      margin-right: 30px;
-
       .avatar-wrapper {
-        margin-top: 5px;
-        position: relative;
+        display: flex;
+        align-items: center;
         cursor: pointer;
+        padding: 5px 12px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        background-color: transparent;
+
+        &:hover {
+          background-color: #f5f7fa;
+        }
 
         .user-avatar {
-          cursor: pointer;
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #409EFF;
+          box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
         }
 
-        .el-icon-caret-bottom {
-          cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
+        .user-name {
+          margin-left: 8px;
+          font-size: 14px;
+          color: #303133;
+          font-weight: 500;
+          max-width: 100px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .el-icon-arrow-down {
+          margin-left: 6px;
           font-size: 12px;
+          color: #909399;
+          transition: transform 0.3s ease;
         }
       }
+
+      // 下拉菜单打开时箭头旋转
+      &.el-dropdown .el-icon-arrow-down {
+        transform: rotate(180deg);
+      }
     }
+  }
+}
+</style>
+
+<style lang="scss">
+// 全局样式 - 下拉菜单样式优化
+.user-dropdown {
+  margin-top: 10px !important;
+  padding: 8px 0 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid #e4e7ed !important;
+
+  .el-dropdown-item {
+    padding: 10px 20px !important;
+    font-size: 14px;
+    color: #606266;
+    transition: all 0.2s ease;
+
+    i {
+      margin-right: 8px;
+      color: #909399;
+    }
+
+    &:hover {
+      background-color: #f5f7fa !important;
+      color: #409EFF;
+
+      i {
+        color: #409EFF;
+      }
+    }
+  }
+
+  .el-dropdown-menu__item--divided {
+    border-top: 1px solid #e4e7ed;
+    margin-top: 8px;
+    padding-top: 16px !important;
   }
 }
 </style>

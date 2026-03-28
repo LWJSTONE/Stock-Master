@@ -586,9 +586,9 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-container {
-  min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
   padding: 20px;
+  padding-bottom: 80px; // 为底部固定按钮留出空间
 
   .dashboard-header {
     display: flex;
