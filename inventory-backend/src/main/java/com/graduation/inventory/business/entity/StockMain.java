@@ -1,12 +1,13 @@
 package com.graduation.inventory.business.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.graduation.inventory.common.domain.BaseEntity;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 实时库存实体类
@@ -15,11 +16,16 @@ import java.math.BigDecimal;
  * @version 1.0.0
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
 @TableName("stock_main")
-public class StockMain extends BaseEntity {
+public class StockMain implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /**
+     * 主键ID
+     */
+    @TableId
+    private Long id;
 
     /**
      * 仓库ID
@@ -56,4 +62,16 @@ public class StockMain extends BaseEntity {
      */
     @TableField("position")
     private String position;
+
+    /**
+     * 创建时间
+     */
+    @TableField("create_time")
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    @TableField("update_time")
+    private Date updateTime;
 }
