@@ -375,19 +375,20 @@ export default {
     async getList() {
       this.listLoading = true
       try {
-        // 模拟数据
-        this.list = [
-          { id: 1, code: 'PRD001', name: '笔记本电脑', categoryId: 1, categoryName: '电子产品', brandId: 4, brandName: '联想', unit: '台', status: 1, description: '15.6寸商务笔记本' },
-          { id: 2, code: 'PRD002', name: '智能手机', categoryId: 1, categoryName: '电子产品', brandId: 1, brandName: '华为', unit: '台', status: 1, description: '5G智能手机' },
-          { id: 3, code: 'PRD003', name: '洗衣液', categoryId: 2, categoryName: '日用品', brandId: null, brandName: '-', unit: '瓶', status: 1, description: '2L装洗衣液' },
-          { id: 4, code: 'PRD004', name: 'T恤衫', categoryId: 4, categoryName: '服装', brandId: null, brandName: '-', unit: '件', status: 0, description: '纯棉T恤' }
-        ]
-        this.total = 4
-        // const res = await getProductList(this.listQuery)
-        // this.list = res.data.list
-        // this.total = res.data.total
+        const res = await getProductList({
+          pageNum: this.listQuery.page,
+          pageSize: this.listQuery.pageSize,
+          spuCode: this.listQuery.name,
+          spuName: this.listQuery.name,
+          categoryId: this.listQuery.categoryId,
+          status: this.listQuery.status
+        })
+        this.list = res.data.rows || []
+        this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
+        this.list = []
+        this.total = 0
       } finally {
         this.listLoading = false
       }

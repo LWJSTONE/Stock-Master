@@ -413,7 +413,7 @@ export default {
       this.listLoading = true
       try {
         const res = await getPurchaseList(this.listQuery)
-        this.list = res.data.list || res.data.records || []
+        this.list = res.data.rows || []
         this.total = res.data.total || 0
       } catch (error) {
         console.error(error)

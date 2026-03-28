@@ -180,18 +180,19 @@ export default {
     async getList() {
       this.listLoading = true
       try {
-        // 模拟数据
-        this.list = [
-          { id: 1, code: 'SUP001', name: '供应商A', contact: '王五', phone: '13900139000', address: '北京市海淀区中关村大街1号', email: 'wangwu@supp.com', status: 1, createTime: '2024-01-01 09:00:00' },
-          { id: 2, code: 'SUP002', name: '供应商B', contact: '赵六', phone: '13900139001', address: '上海市黄浦区南京东路100号', email: 'zhaoliu@supp.com', status: 1, createTime: '2024-01-02 10:00:00' },
-          { id: 3, code: 'SUP003', name: '供应商C', contact: '钱七', phone: '13900139002', address: '广州市天河区天河路200号', email: 'qianqi@supp.com', status: 0, createTime: '2024-01-03 11:00:00' }
-        ]
-        this.total = 3
-        // const res = await getSupplierList(this.listQuery)
-        // this.list = res.data.list
-        // this.total = res.data.total
+        const res = await getSupplierList({
+          pageNum: this.listQuery.page,
+          pageSize: this.listQuery.pageSize,
+          supCode: this.listQuery.name,
+          supName: this.listQuery.name,
+          contactPerson: this.listQuery.contact
+        })
+        this.list = res.data.rows || []
+        this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
+        this.list = []
+        this.total = 0
       } finally {
         this.listLoading = false
       }

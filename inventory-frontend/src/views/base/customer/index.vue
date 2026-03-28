@@ -190,18 +190,19 @@ export default {
     async getList() {
       this.listLoading = true
       try {
-        // 模拟数据
-        this.list = [
-          { id: 1, code: 'CUS001', name: '客户A', contact: '客户张三', phone: '13700137000', address: '广州市天河区天河路300号', email: 'zhangsan@cust.com', status: 1, level: 'vip', creditLimit: 100000, createTime: '2024-01-01 09:00:00' },
-          { id: 2, code: 'CUS002', name: '客户B', contact: '客户李四', phone: '13700137001', address: '深圳市南山区科技园南路100号', email: 'lisi@cust.com', status: 1, level: 'normal', creditLimit: 50000, createTime: '2024-01-02 10:00:00' },
-          { id: 3, code: 'CUS003', name: '客户C', contact: '客户王五', phone: '13700137002', address: '杭州市西湖区文三路200号', email: 'wangwu@cust.com', status: 0, level: 'strategic', creditLimit: 500000, createTime: '2024-01-03 11:00:00' }
-        ]
-        this.total = 3
-        // const res = await getCustomerList(this.listQuery)
-        // this.list = res.data.list
-        // this.total = res.data.total
+        const res = await getCustomerList({
+          pageNum: this.listQuery.page,
+          pageSize: this.listQuery.pageSize,
+          custCode: this.listQuery.name,
+          custName: this.listQuery.name,
+          contactPerson: this.listQuery.contact
+        })
+        this.list = res.data.rows || []
+        this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
+        this.list = []
+        this.total = 0
       } finally {
         this.listLoading = false
       }

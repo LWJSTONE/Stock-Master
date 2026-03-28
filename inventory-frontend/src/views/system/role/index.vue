@@ -248,7 +248,7 @@ export default {
       this.listLoading = true
       try {
         const res = await getRoleList(this.listQuery)
-        this.list = res.data.list || []
+        this.list = res.data.rows || []
         this.total = res.data.total || 0
       } catch (error) {
         console.error('获取角色列表失败:', error)

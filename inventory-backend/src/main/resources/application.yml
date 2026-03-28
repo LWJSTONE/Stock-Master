@@ -26,7 +26,7 @@ spring:
     name: inventory-backend
 
   profiles:
-    active: h2
+    active: druid
 
   # 解决Spring MVC路径匹配问题
   mvc:
@@ -35,23 +35,15 @@ spring:
 
   # 数据源配置（由profile管理）
   datasource:
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
-    url: ${DB_URL:jdbc:h2:mem:inventory_v2;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE}
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/inventory_v2?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
 
   # 主类配置
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
-
-  # H2控制台配置
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
 
   # Jackson JSON配置
   jackson:
@@ -74,14 +66,6 @@ spring:
   # 静态资源配置
   resources:
     static-locations: classpath:/static/,file:${file.upload.path}
-
-  # SQL初始化配置
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:schema-h2.sql
-      data-locations: classpath:data-h2.sql
-      encoding: UTF-8
 
 # ============================================================
 # MyBatis-Plus 配置

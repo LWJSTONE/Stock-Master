@@ -277,7 +277,7 @@ export default {
       this.listLoading = true
       try {
         const res = await getUserList(this.listQuery)
-        this.list = res.data.list || []
+        this.list = res.data.rows || []
         this.total = res.data.total || 0
       } catch (error) {
         console.error('获取用户列表失败:', error)

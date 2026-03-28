@@ -174,18 +174,19 @@ export default {
     async getList() {
       this.listLoading = true
       try {
-        // 模拟数据
-        this.list = [
-          { id: 1, code: 'WH001', name: '主仓库', address: '北京市朝阳区建国路88号', manager: '张三', phone: '13800138000', area: '5000', status: 1, remark: '主要存储电子产品', createTime: '2024-01-01 09:00:00' },
-          { id: 2, code: 'WH002', name: '分仓库', address: '上海市浦东新区张江路100号', manager: '李四', phone: '13800138001', area: '3000', status: 1, remark: '存储日用品', createTime: '2024-01-02 10:00:00' },
-          { id: 3, code: 'WH003', name: '临时仓库', address: '广州市天河区天河路200号', manager: '王五', phone: '13800138002', area: '1000', status: 0, remark: '临时存储', createTime: '2024-01-03 11:00:00' }
-        ]
-        this.total = 3
-        // const res = await getWarehouseList(this.listQuery)
-        // this.list = res.data.list
-        // this.total = res.data.total
+        const res = await getWarehouseList({
+          pageNum: this.listQuery.page,
+          pageSize: this.listQuery.pageSize,
+          whCode: this.listQuery.name,
+          whName: this.listQuery.name,
+          status: this.listQuery.status
+        })
+        this.list = res.data.rows || []
+        this.total = res.data.total || 0
       } catch (error) {
         console.error(error)
+        this.list = []
+        this.total = 0
       } finally {
         this.listLoading = false
       }

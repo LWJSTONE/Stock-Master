@@ -268,7 +268,7 @@ export default {
         }
         delete params.dateRange
         const res = await getLogList(params)
-        this.list = res.data.list || []
+        this.list = res.data.rows || []
         this.total = res.data.total || 0
       } catch (error) {
         console.error('获取日志列表失败:', error)
