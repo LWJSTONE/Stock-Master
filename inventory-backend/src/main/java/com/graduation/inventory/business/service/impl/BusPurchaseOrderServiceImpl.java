@@ -53,7 +53,7 @@ public class BusPurchaseOrderServiceImpl extends ServiceImpl<BusPurchaseOrderMap
             LambdaQueryWrapper<BusPurchaseItem> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(BusPurchaseItem::getPurchaseId, purchaseId);
             List<BusPurchaseItem> items = purchaseItemMapper.selectList(wrapper);
-            // 可以在这里将items设置到order的扩展属性中
+            order.setItems(items);
         }
         return order;
     }

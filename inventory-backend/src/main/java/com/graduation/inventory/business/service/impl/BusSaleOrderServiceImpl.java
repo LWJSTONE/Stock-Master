@@ -52,6 +52,7 @@ public class BusSaleOrderServiceImpl extends ServiceImpl<BusSaleOrderMapper, Bus
             LambdaQueryWrapper<BusSaleItem> wrapper = new LambdaQueryWrapper<>();
             wrapper.eq(BusSaleItem::getSaleId, saleId);
             List<BusSaleItem> items = saleItemMapper.selectList(wrapper);
+            order.setItems(items);
         }
         return order;
     }

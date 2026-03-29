@@ -136,10 +136,30 @@ export function cancelSale(saleId) {
 }
 
 // 销售出库
-export function saleOutbound(saleId) {
+export function saleOutbound(saleId, warehouseId) {
   return request({
     url: '/api/business/sale/outstock',
     method: 'put',
-    params: { saleId }
+    params: { saleId, warehouseId }
+  })
+}
+
+// ==================== 库存记录API ====================
+
+// 获取入库记录列表
+export function getInboundList(params) {
+  return request({
+    url: '/api/stock/record/list',
+    method: 'get',
+    params
+  })
+}
+
+// 获取出库记录列表
+export function getOutboundList(params) {
+  return request({
+    url: '/api/stock/record/list',
+    method: 'get',
+    params
   })
 }

@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 采购订单主表实体类
@@ -77,4 +78,10 @@ public class BusPurchaseOrder extends BaseEntity {
     @TableLogic(value = "0", delval = "1")
     @TableField("is_deleted")
     private Integer isDeleted;
+
+    /**
+     * 采购明细列表（非数据库字段）
+     */
+    @TableField(exist = false)
+    private List<BusPurchaseItem> items;
 }
