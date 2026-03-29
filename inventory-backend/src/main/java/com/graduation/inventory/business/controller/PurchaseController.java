@@ -70,6 +70,17 @@ public class PurchaseController {
     }
 
     /**
+     * 更新采购订单
+     */
+    @ApiOperation("更新采购订单")
+    @PreAuthorize("@ss.hasPermi('business:purchase:edit')")
+    @Log(title = "采购管理", action = BusinessType.UPDATE)
+    @PutMapping
+    public Result<Void> update(@Validated @RequestBody PurchaseOrderDto dto) {
+        return purchaseOrderService.updatePurchase(dto) ? Result.success() : Result.error("更新采购订单失败");
+    }
+
+    /**
      * 审核采购订单
      */
     @ApiOperation("审核采购订单")

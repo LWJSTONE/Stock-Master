@@ -3,6 +3,8 @@ package com.graduation.inventory.business.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.graduation.inventory.base.entity.BaseProductSku;
+import com.graduation.inventory.base.mapper.BaseProductSkuMapper;
 import com.graduation.inventory.business.entity.StockMain;
 import com.graduation.inventory.business.entity.StockRecord;
 import com.graduation.inventory.business.mapper.StockMainMapper;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 库存服务实现类
@@ -28,6 +31,7 @@ import java.util.Map;
 public class StockMainServiceImpl extends ServiceImpl<StockMainMapper, StockMain> implements StockMainService {
 
     private final StockRecordMapper stockRecordMapper;
+    private final BaseProductSkuMapper skuMapper;
 
     @Override
     public Page<StockMain> selectStockPage(Page<StockMain> page, Long warehouseId, String skuCode, String skuName) {
@@ -93,7 +97,35 @@ public class StockMainServiceImpl extends ServiceImpl<StockMainMapper, StockMain
         wrapper.eq(StringUtils.hasText(orderNo), StockRecord::getOrderNo, orderNo);
         wrapper.eq(orderType != null, StockRecord::getOrderType, orderType);
         wrapper.orderByDesc(StockRecord::getCreateTime);
-        return stockRecordMapper.selectPage(page, wrapper);
+        Page<StockRecord> result = stockRecordMapper.selectPage(page, wrapper);
+        
+        // 填充SKU信息
+        List<StockRecord> records = result.getRecords();
+        if (!records.isEmpty()) {
+            List<Long> skuIds = records.stream()
+                    .map(StockRecord::getSkuId)
+                    .filter(id -> id != null)
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            if (!skuIds.isEmpty()) {
+                // 批量查询SKU信息
+                List<BaseProductSku> skuList = skuMapper.selectBatchIds(skuIds);
+                Map<Long, BaseProductSku> skuMap = skuList.stream()
+                        .collect(Collectors.toMap(BaseProductSku::getId, sku -> sku));
+                
+                // 填充信息
+                for (StockRecord record : records) {
+                    BaseProductSku sku = skuMap.get(record.getSkuId());
+                    if (sku != null) {
+                        record.setSkuCode(sku.getSkuCode());
+                        record.setSkuName(sku.getSkuName());
+                    }
+                }
+            }
+        }
+        
+        return result;
     }
 
     @Override

@@ -70,6 +70,17 @@ public class SaleController {
     }
 
     /**
+     * 更新销售订单
+     */
+    @ApiOperation("更新销售订单")
+    @PreAuthorize("@ss.hasPermi('business:sale:edit')")
+    @Log(title = "销售管理", action = BusinessType.UPDATE)
+    @PutMapping
+    public Result<Void> update(@Validated @RequestBody SaleOrderDto dto) {
+        return saleOrderService.updateSale(dto) ? Result.success() : Result.error("更新销售订单失败");
+    }
+
+    /**
      * 审核销售订单
      */
     @ApiOperation("审核销售订单")

@@ -39,14 +39,14 @@
           {{ getOrderTypeText(scope.row.orderType) }}
         </template>
       </el-table-column>
-      <el-table-column prop="warehouseName" label="仓库" width="120">
+      <el-table-column prop="warehouseId" label="仓库" width="120">
         <template slot-scope="scope">
           {{ getWarehouseName(scope.row.warehouseId) }}
         </template>
       </el-table-column>
-      <el-table-column prop="skuName" label="商品" min-width="150">
+      <el-table-column label="商品" min-width="150">
         <template slot-scope="scope">
-          {{ scope.row.skuCode }} - {{ scope.row.skuName }}
+          {{ scope.row.skuCode || '-' }} - {{ scope.row.skuName || '-' }}
         </template>
       </el-table-column>
       <el-table-column prop="changeQty" label="入库数量" width="100">
@@ -88,8 +88,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         orderNo: '',
-        warehouseId: '',
-        orderType: 1 // 1表示采购入库
+        warehouseId: ''
       },
       total: 0
     }
@@ -112,7 +111,7 @@ export default {
     // 获取仓库名称
     getWarehouseName(warehouseId) {
       const warehouse = this.warehouseOptions.find(item => item.id === warehouseId)
-      return warehouse ? warehouse.whName : warehouseId
+      return warehouse ? warehouse.whName : warehouseId || '-'
     },
 
     // 获取订单类型文本
@@ -155,8 +154,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         orderNo: '',
-        warehouseId: '',
-        orderType: 1
+        warehouseId: ''
       }
       this.getList()
     },

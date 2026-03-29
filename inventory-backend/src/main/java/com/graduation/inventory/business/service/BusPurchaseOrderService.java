@@ -34,12 +34,28 @@ public interface BusPurchaseOrderService extends IService<BusPurchaseOrder> {
     BusPurchaseOrder selectPurchaseById(Long purchaseId);
 
     /**
+     * 根据ID查询采购订单详情（包含明细）
+     *
+     * @param purchaseId 采购订单ID
+     * @return 采购订单详情
+     */
+    BusPurchaseOrder getByIdWithItems(Long purchaseId);
+
+    /**
      * 新增采购订单
      *
      * @param dto 采购订单DTO
      * @return 是否成功
      */
     boolean insertPurchase(PurchaseOrderDto dto);
+
+    /**
+     * 更新采购订单
+     *
+     * @param dto 采购订单DTO
+     * @return 是否成功
+     */
+    boolean updatePurchase(PurchaseOrderDto dto);
 
     /**
      * 审核采购订单

@@ -151,7 +151,7 @@ export function getInboundList(params) {
   return request({
     url: '/api/stock/record/list',
     method: 'get',
-    params
+    params: { ...params, orderType: 1 } // 1表示采购入库
   })
 }
 
@@ -160,6 +160,6 @@ export function getOutboundList(params) {
   return request({
     url: '/api/stock/record/list',
     method: 'get',
-    params
+    params: { ...params, orderType: 2 } // 2表示销售出库
   })
 }

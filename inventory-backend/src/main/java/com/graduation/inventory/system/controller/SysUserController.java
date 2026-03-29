@@ -17,6 +17,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -155,5 +159,43 @@ public class SysUserController {
         user.setId(statusDto.getUserId());
         user.setStatus(statusDto.getStatus());
         return sysUserService.updateStatus(user) > 0 ? Result.success() : Result.error("修改用户状态失败");
+    }
+
+    /**
+     * 导出用户数据
+     *
+     * @param response HTTP响应
+     */
+    @ApiOperation("导出用户数据")
+    @PreAuthorize("@ss.hasPermi('system:user:export')")
+    @Log(title = "用户管理", action = BusinessType.EXPORT)
+    @GetMapping("/export")
+    public void export(HttpServletResponse response) throws IOException {
+        // 查询所有用户
+        List<SysUser> list = sysUserService.selectUserList(new SysUser());
+
+        // 设置响应头
+        response.setContentType("text/csv;charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment;filename=users.csv");
+
+        // 写入CSV
+        try (PrintWriter writer = response.getWriter()) {
+            // 写入BOM以支持中文
+            writer.write('\ufeff');
+            // 写入表头
+            writer.println("ID,用户名,姓名,手机号,邮箱,状态,创建时间");
+            // 写入数据
+            for (SysUser user : list) {
+                writer.println(String.format("%d,%s,%s,%s,%s,%s,%s",
+                        user.getId(),
+                        user.getUsername(),
+                        user.getRealName() != null ? user.getRealName() : "",
+                        user.getPhone() != null ? user.getPhone() : "",
+                        user.getEmail() != null ? user.getEmail() : "",
+                        "0".equals(user.getStatus()) ? "启用" : "禁用",
+                        user.getCreateTime() != null ? user.getCreateTime().toString() : ""
+                ));
+            }
+        }
     }
 }

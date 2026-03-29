@@ -414,7 +414,7 @@ export default {
       try {
         const res = await getMenuTree()
         this.menuOptions = [
-          { id: 0, name: '根目录', children: res.data || [] }
+          { id: 0, menuName: '根目录', children: res.data || [] }
         ]
       } catch (error) {
         console.error('获取菜单树失败:', error)
@@ -467,7 +467,7 @@ export default {
 
     // 删除
     handleDelete(row) {
-      this.$confirm(`确认删除菜单 "${row.name}" ?`, '提示', {
+      this.$confirm(`确认删除菜单 "${row.menuName}" ?`, '提示', {
         type: 'warning'
       }).then(async() => {
         try {

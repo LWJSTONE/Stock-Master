@@ -52,6 +52,18 @@ public class StockRecord implements Serializable {
     private Long skuId;
 
     /**
+     * SKU编码（非数据库字段，用于显示）
+     */
+    @TableField(exist = false)
+    private String skuCode;
+
+    /**
+     * SKU名称（非数据库字段，用于显示）
+     */
+    @TableField(exist = false)
+    private String skuName;
+
+    /**
      * 变动数量
      */
     @TableField("change_qty")

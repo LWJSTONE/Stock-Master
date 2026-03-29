@@ -96,6 +96,49 @@ public class BusPurchaseOrderServiceImpl extends ServiceImpl<BusPurchaseOrderMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public boolean updatePurchase(PurchaseOrderDto dto) {
+        BusPurchaseOrder order = baseMapper.selectById(dto.getId());
+        if (order == null) {
+            throw new ServiceException("采购订单不存在");
+        }
+        if (order.getStatus() != 0) {
+            throw new ServiceException("只有待审核状态的订单才能修改");
+        }
+        
+        // 更新主表
+        order.setSupplierId(dto.getSupplierId());
+        order.setRemark(dto.getRemark());
+        
+        // 计算总金额
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (PurchaseItemDto item : dto.getItems()) {
+            totalAmount = totalAmount.add(item.getPrice().multiply(item.getQuantity()));
+        }
+        order.setTotalAmount(totalAmount);
+        
+        baseMapper.updateById(order);
+        
+        // 删除原明细
+        LambdaQueryWrapper<BusPurchaseItem> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.eq(BusPurchaseItem::getPurchaseId, dto.getId());
+        purchaseItemMapper.delete(deleteWrapper);
+        
+        // 重新插入明细
+        for (PurchaseItemDto itemDto : dto.getItems()) {
+            BusPurchaseItem item = new BusPurchaseItem();
+            BeanUtils.copyProperties(itemDto, item);
+            item.setPurchaseId(order.getId());
+            item.setTotalPrice(itemDto.getPrice().multiply(itemDto.getQuantity()));
+            item.setCreateTime(new Date());
+            item.setUpdateTime(new Date());
+            purchaseItemMapper.insert(item);
+        }
+        
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean auditPurchase(AuditDto dto) {
         BusPurchaseOrder order = baseMapper.selectById(dto.getId());
         if (order == null) {

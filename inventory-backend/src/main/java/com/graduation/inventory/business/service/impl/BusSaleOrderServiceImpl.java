@@ -96,6 +96,49 @@ public class BusSaleOrderServiceImpl extends ServiceImpl<BusSaleOrderMapper, Bus
 
     @Override
     @Transactional(rollbackFor = Exception.class)
+    public boolean updateSale(SaleOrderDto dto) {
+        BusSaleOrder order = baseMapper.selectById(dto.getId());
+        if (order == null) {
+            throw new ServiceException("销售订单不存在");
+        }
+        if (order.getStatus() != 0) {
+            throw new ServiceException("只有待审核状态的订单才能修改");
+        }
+        
+        // 更新主表
+        order.setCustomerId(dto.getCustomerId());
+        order.setRemark(dto.getRemark());
+        
+        // 计算总金额
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (SaleItemDto item : dto.getItems()) {
+            totalAmount = totalAmount.add(item.getPrice().multiply(item.getQuantity()));
+        }
+        order.setTotalAmount(totalAmount);
+        
+        baseMapper.updateById(order);
+        
+        // 删除原明细
+        LambdaQueryWrapper<BusSaleItem> deleteWrapper = new LambdaQueryWrapper<>();
+        deleteWrapper.eq(BusSaleItem::getSaleId, dto.getId());
+        saleItemMapper.delete(deleteWrapper);
+        
+        // 重新插入明细
+        for (SaleItemDto itemDto : dto.getItems()) {
+            BusSaleItem item = new BusSaleItem();
+            BeanUtils.copyProperties(itemDto, item);
+            item.setSaleId(order.getId());
+            item.setTotalPrice(itemDto.getPrice().multiply(itemDto.getQuantity()));
+            item.setCreateTime(new Date());
+            item.setUpdateTime(new Date());
+            saleItemMapper.insert(item);
+        }
+        
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean auditSale(AuditDto dto) {
         BusSaleOrder order = baseMapper.selectById(dto.getId());
         if (order == null) {

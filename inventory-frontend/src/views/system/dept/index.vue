@@ -329,7 +329,7 @@ export default {
 
     // 删除
     handleDelete(row) {
-      this.$confirm(`确认删除部门 "${row.name}" ?`, '提示', {
+      this.$confirm(`确认删除部门 "${row.deptName}" ?`, '提示', {
         type: 'warning'
       }).then(async() => {
         try {

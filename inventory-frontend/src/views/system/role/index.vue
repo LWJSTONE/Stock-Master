@@ -164,7 +164,7 @@
           <el-tree
             ref="menuTree"
             :data="menuTree"
-            :props="{ children: 'children', label: 'name' }"
+            :props="{ children: 'children', label: 'menuName' }"
             :default-checked-keys="checkedMenuKeys"
             show-checkbox
             node-key="id"
@@ -298,7 +298,7 @@ export default {
 
     // 删除
     handleDelete(row) {
-      this.$confirm(`确认删除角色 "${row.name}" ?`, '提示', {
+      this.$confirm(`确认删除角色 "${row.roleName}" ?`, '提示', {
         type: 'warning'
       }).then(async() => {
         try {
@@ -314,7 +314,7 @@ export default {
     // 批量删除
     handleBatchDelete() {
       const ids = this.multipleSelection.map(item => item.id)
-      const names = this.multipleSelection.map(item => item.name).join('、')
+      const names = this.multipleSelection.map(item => item.roleName).join('、')
       this.$confirm(`确认删除以下角色: ${names} ?`, '提示', {
         type: 'warning'
       }).then(async() => {

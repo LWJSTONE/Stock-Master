@@ -42,6 +42,14 @@ public interface BusSaleOrderService extends IService<BusSaleOrder> {
     boolean insertSale(SaleOrderDto dto);
 
     /**
+     * 更新销售订单
+     *
+     * @param dto 销售订单DTO
+     * @return 是否成功
+     */
+    boolean updateSale(SaleOrderDto dto);
+
+    /**
      * 审核销售订单
      *
      * @param dto 审核DTO
