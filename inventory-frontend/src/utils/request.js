@@ -31,6 +31,11 @@ service.interceptors.response.use(
     const res = response.data
     console.log('API Response:', response.config.url, 'status:', response.status, 'data:', res)
 
+    // 如果是 Blob 类型响应（文件下载），直接返回
+    if (res instanceof Blob) {
+      return res
+    }
+
     // 如果自定义代码不是 200，则判断为错误
     if (res.code !== 200) {
       Message({
