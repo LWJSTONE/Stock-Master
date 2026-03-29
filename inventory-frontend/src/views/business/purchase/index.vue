@@ -555,8 +555,8 @@ export default {
               skuId: item.skuId,
               skuCode: item.skuCode,
               skuName: item.skuName,
-              price: item.price,
-              quantity: item.quantity
+              price: Number(item.price) || 0,
+              quantity: Number(item.quantity) || 0
             }))
           }
 
@@ -571,6 +571,7 @@ export default {
           this.getList()
         } catch (error) {
           console.error(error)
+          this.$message.error(error.message || '操作失败')
         } finally {
           this.submitLoading = false
         }

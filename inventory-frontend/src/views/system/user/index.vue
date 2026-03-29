@@ -407,15 +407,17 @@ export default {
     async handleExport() {
       try {
         const res = await exportUser(this.listQuery)
-        const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        const blob = new Blob([res], { type: 'text/csv;charset=UTF-8' })
         const url = window.URL.createObjectURL(blob)
         const link = document.createElement('a')
         link.href = url
-        link.download = '用户数据.xlsx'
+        link.download = '用户数据.csv'
         link.click()
         window.URL.revokeObjectURL(url)
+        this.$message.success('导出成功')
       } catch (error) {
         console.error('导出失败:', error)
+        this.$message.error('导出失败')
       }
     },
 

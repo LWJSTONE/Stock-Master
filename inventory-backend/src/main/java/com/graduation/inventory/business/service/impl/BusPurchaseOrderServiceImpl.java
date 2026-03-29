@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.graduation.inventory.business.entity.BusPurchaseItem;
 import com.graduation.inventory.business.entity.BusPurchaseOrder;
+import com.graduation.inventory.business.entity.StockMain;
+import com.graduation.inventory.business.entity.StockRecord;
 import com.graduation.inventory.business.entity.dto.AuditDto;
 import com.graduation.inventory.business.entity.dto.PurchaseItemDto;
 import com.graduation.inventory.business.entity.dto.PurchaseOrderDto;
 import com.graduation.inventory.business.mapper.BusPurchaseItemMapper;
 import com.graduation.inventory.business.mapper.BusPurchaseOrderMapper;
+import com.graduation.inventory.business.mapper.StockMainMapper;
+import com.graduation.inventory.business.mapper.StockRecordMapper;
 import com.graduation.inventory.business.service.BusPurchaseOrderService;
 import com.graduation.inventory.common.exception.ServiceException;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +38,8 @@ import java.util.UUID;
 public class BusPurchaseOrderServiceImpl extends ServiceImpl<BusPurchaseOrderMapper, BusPurchaseOrder> implements BusPurchaseOrderService {
 
     private final BusPurchaseItemMapper purchaseItemMapper;
+    private final StockMainMapper stockMainMapper;
+    private final StockRecordMapper stockRecordMapper;
 
     @Override
     public Page<BusPurchaseOrder> selectPurchasePage(Page<BusPurchaseOrder> page, String purchaseNo, Long supplierId, Integer status) {
@@ -56,6 +62,11 @@ public class BusPurchaseOrderServiceImpl extends ServiceImpl<BusPurchaseOrderMap
             order.setItems(items);
         }
         return order;
+    }
+
+    @Override
+    public BusPurchaseOrder getByIdWithItems(Long purchaseId) {
+        return selectPurchaseById(purchaseId);
     }
 
     @Override
@@ -104,25 +115,31 @@ public class BusPurchaseOrderServiceImpl extends ServiceImpl<BusPurchaseOrderMap
         if (order.getStatus() != 0) {
             throw new ServiceException("只有待审核状态的订单才能修改");
         }
-        
+        if (dto.getItems() == null || dto.getItems().isEmpty()) {
+            throw new ServiceException("采购明细不能为空");
+        }
+
         // 更新主表
         order.setSupplierId(dto.getSupplierId());
         order.setRemark(dto.getRemark());
-        
+
         // 计算总金额
         BigDecimal totalAmount = BigDecimal.ZERO;
         for (PurchaseItemDto item : dto.getItems()) {
+            if (item.getPrice() == null || item.getQuantity() == null) {
+                throw new ServiceException("商品价格或数量不能为空");
+            }
             totalAmount = totalAmount.add(item.getPrice().multiply(item.getQuantity()));
         }
         order.setTotalAmount(totalAmount);
-        
+
         baseMapper.updateById(order);
-        
+
         // 删除原明细
         LambdaQueryWrapper<BusPurchaseItem> deleteWrapper = new LambdaQueryWrapper<>();
         deleteWrapper.eq(BusPurchaseItem::getPurchaseId, dto.getId());
         purchaseItemMapper.delete(deleteWrapper);
-        
+
         // 重新插入明细
         for (PurchaseItemDto itemDto : dto.getItems()) {
             BusPurchaseItem item = new BusPurchaseItem();
@@ -133,7 +150,7 @@ public class BusPurchaseOrderServiceImpl extends ServiceImpl<BusPurchaseOrderMap
             item.setUpdateTime(new Date());
             purchaseItemMapper.insert(item);
         }
-        
+
         return true;
     }
 
@@ -165,11 +182,68 @@ public class BusPurchaseOrderServiceImpl extends ServiceImpl<BusPurchaseOrderMap
         if (order.getStatus() != 1) {
             throw new ServiceException("只有已审核状态的订单才能入库");
         }
-        
-        // TODO: 执行入库逻辑，更新库存
+        if (warehouseId == null) {
+            throw new ServiceException("请选择入库仓库");
+        }
+
+        // 查询订单明细
+        LambdaQueryWrapper<BusPurchaseItem> itemWrapper = new LambdaQueryWrapper<>();
+        itemWrapper.eq(BusPurchaseItem::getPurchaseId, purchaseId);
+        List<BusPurchaseItem> items = purchaseItemMapper.selectList(itemWrapper);
+        if (items.isEmpty()) {
+            throw new ServiceException("订单明细为空，无法入库");
+        }
+
+        // 生成入库批次号
+        String batchNo = "IN" + System.currentTimeMillis();
+
+        // 处理每个商品明细
+        for (BusPurchaseItem item : items) {
+            // 查询当前库存
+            LambdaQueryWrapper<StockMain> stockWrapper = new LambdaQueryWrapper<>();
+            stockWrapper.eq(StockMain::getWarehouseId, warehouseId);
+            stockWrapper.eq(StockMain::getSkuId, item.getSkuId());
+            StockMain stock = stockMainMapper.selectOne(stockWrapper);
+
+            BigDecimal beforeQty = BigDecimal.ZERO;
+            if (stock == null) {
+                // 新增库存记录
+                stock = new StockMain();
+                stock.setWarehouseId(warehouseId);
+                stock.setSkuId(item.getSkuId());
+                stock.setQuantity(item.getQuantity());
+                stock.setFrozenQty(BigDecimal.ZERO);
+                stock.setBatchNo(batchNo);
+                stock.setCreateTime(new Date());
+                stock.setUpdateTime(new Date());
+                stockMainMapper.insert(stock);
+            } else {
+                // 更新库存
+                beforeQty = stock.getQuantity();
+                stock.setQuantity(beforeQty.add(item.getQuantity()));
+                stock.setUpdateTime(new Date());
+                stockMainMapper.updateById(stock);
+            }
+
+            // 创建库存流水记录
+            StockRecord record = new StockRecord();
+            record.setOrderNo(order.getPurchaseNo());
+            record.setOrderType(1); // 采购入库
+            record.setWarehouseId(warehouseId);
+            record.setSkuId(item.getSkuId());
+            record.setChangeQty(item.getQuantity());
+            record.setBeforeQty(beforeQty);
+            record.setAfterQty(stock.getQuantity());
+            record.setBatchNo(batchNo);
+            record.setSupplierId(order.getSupplierId());
+            record.setCreateTime(new Date());
+            stockRecordMapper.insert(record);
+        }
+
+        // 更新订单状态
         order.setStatus(2); // 已入库
         baseMapper.updateById(order);
-        
+
         return true;
     }
 
