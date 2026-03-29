@@ -87,13 +87,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @return 权限集合
      */
     private Set<String> getUserPermissions(Long userId) {
-        // TODO: 从数据库查询用户权限
-        // 这里暂时返回空集合，后续实现权限管理模块时完善
         Set<String> permissions = new HashSet<>();
         
-        // 可以通过userMapper查询用户权限
-        // List<String> perms = userMapper.selectPermissionsByUserId(userId);
-        // permissions.addAll(perms);
+        // 从数据库查询用户权限
+        List<String> perms = userMapper.selectPermissionsByUserId(userId);
+        if (perms != null && !perms.isEmpty()) {
+            permissions.addAll(perms);
+        }
         
         return permissions;
     }
