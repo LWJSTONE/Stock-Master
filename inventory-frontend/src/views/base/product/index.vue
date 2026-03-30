@@ -107,13 +107,13 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="品牌" prop="brandId">
-              <el-select v-model="form.brandId" placeholder="请选择品牌" style="width: 100%" clearable>
+            <el-form-item label="品牌" prop="brand">
+              <el-select v-model="form.brand" placeholder="请选择品牌" style="width: 100%" clearable>
                 <el-option
                   v-for="item in brandOptions"
                   :key="item.id"
                   :label="item.name"
-                  :value="item.id"
+                  :value="item.name"
                 />
               </el-select>
             </el-form-item>
