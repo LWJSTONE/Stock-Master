@@ -311,7 +311,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Override
     public List<Long> selectMenuIdsByRoleId(Long roleId) {
         if (roleId == null) {
-            return List.of();
+            return new java.util.ArrayList<>();
         }
         LambdaQueryWrapper<SysRoleMenu> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(SysRoleMenu::getRoleId, roleId);
