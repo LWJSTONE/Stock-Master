@@ -57,13 +57,10 @@ const actions = {
 
         const { roles, name, avatar, permissions } = data
 
-        // 角色必须是非空数组
-        if (!roles || roles.length <= 0) {
-          reject('该用户没有角色')
-          return
-        }
+        // 如果没有角色，给一个默认角色，允许登录
+        const userRoles = roles && roles.length > 0 ? roles : ['user']
 
-        commit('SET_ROLES', roles)
+        commit('SET_ROLES', userRoles)
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_PERMISSIONS', permissions)

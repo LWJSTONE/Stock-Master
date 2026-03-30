@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.graduation.inventory.common.exception.ServiceException;
 import com.graduation.inventory.common.utils.StringUtils;
+import com.graduation.inventory.system.entity.SysDept;
 import com.graduation.inventory.system.entity.SysUser;
 import com.graduation.inventory.system.entity.SysUserRole;
+import com.graduation.inventory.system.mapper.SysDeptMapper;
 import com.graduation.inventory.system.mapper.SysUserMapper;
 import com.graduation.inventory.system.mapper.SysUserRoleMapper;
 import com.graduation.inventory.system.service.SysUserService;
@@ -36,6 +38,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Autowired
     private SysUserRoleMapper userRoleMapper;
+
+    @Autowired
+    private SysDeptMapper deptMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -75,7 +80,19 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         // 按创建时间倒序
         queryWrapper.orderByDesc(SysUser::getCreateTime);
 
-        return userMapper.selectList(queryWrapper);
+        List<SysUser> list = userMapper.selectList(queryWrapper);
+        
+        // 为每个用户设置部门名称
+        for (SysUser sysUser : list) {
+            if (sysUser.getDeptId() != null) {
+                SysDept dept = deptMapper.selectById(sysUser.getDeptId());
+                if (dept != null) {
+                    sysUser.setDeptName(dept.getDeptName());
+                }
+            }
+        }
+        
+        return list;
     }
 
     /**
@@ -139,6 +156,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         int result = userMapper.insert(user);
         log.info("新增用户成功, 用户名: {}, 用户ID: {}", user.getUsername(), user.getId());
 
+        // 保存用户角色关联
+        if (user.getRoleIds() != null && !user.getRoleIds().isEmpty()) {
+            for (Long roleId : user.getRoleIds()) {
+                SysUserRole userRole = new SysUserRole();
+                userRole.setUserId(user.getId());
+                userRole.setRoleId(roleId);
+                userRoleMapper.insert(userRole);
+            }
+            log.info("保存用户角色关联成功, 用户ID: {}, 角色IDs: {}", user.getId(), user.getRoleIds());
+        }
+
         return result;
     }
 
@@ -168,6 +196,23 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         int result = userMapper.updateById(user);
         log.info("修改用户成功, 用户ID: {}", user.getId());
+
+        // 更新用户角色关联
+        if (user.getRoleIds() != null) {
+            // 先删除旧的角色关联
+            LambdaQueryWrapper<SysUserRole> deleteWrapper = new LambdaQueryWrapper<>();
+            deleteWrapper.eq(SysUserRole::getUserId, user.getId());
+            userRoleMapper.delete(deleteWrapper);
+            
+            // 再添加新的角色关联
+            for (Long roleId : user.getRoleIds()) {
+                SysUserRole userRole = new SysUserRole();
+                userRole.setUserId(user.getId());
+                userRole.setRoleId(roleId);
+                userRoleMapper.insert(userRole);
+            }
+            log.info("更新用户角色关联成功, 用户ID: {}, 角色IDs: {}", user.getId(), user.getRoleIds());
+        }
 
         return result;
     }

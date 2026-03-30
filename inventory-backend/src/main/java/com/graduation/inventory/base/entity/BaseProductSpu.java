@@ -50,6 +50,20 @@ public class BaseProductSpu extends BaseEntity {
      */
     @ApiModelProperty(value = "品牌")
     private String brand;
+    
+    /**
+     * 分类名称（非数据库字段，用于显示）
+     */
+    @ApiModelProperty(value = "分类名称")
+    @TableField(exist = false)
+    private String categoryName;
+    
+    /**
+     * 品牌名称（非数据库字段，用于显示）
+     */
+    @ApiModelProperty(value = "品牌名称")
+    @TableField(exist = false)
+    private String brandName;
 
     /**
      * 单位

@@ -3,8 +3,10 @@ package com.graduation.inventory.base.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.graduation.inventory.base.entity.BaseCategory;
 import com.graduation.inventory.base.entity.BaseProductSku;
 import com.graduation.inventory.base.entity.BaseProductSpu;
+import com.graduation.inventory.base.mapper.BaseCategoryMapper;
 import com.graduation.inventory.base.mapper.BaseProductSkuMapper;
 import com.graduation.inventory.base.mapper.BaseProductSpuMapper;
 import com.graduation.inventory.base.service.BaseProductSpuService;
@@ -34,6 +36,9 @@ public class BaseProductSpuServiceImpl extends ServiceImpl<BaseProductSpuMapper,
 
     @Autowired
     private BaseProductSkuMapper skuMapper;
+    
+    @Autowired
+    private BaseCategoryMapper categoryMapper;
 
     /**
      * 分页查询SPU列表
@@ -47,7 +52,21 @@ public class BaseProductSpuServiceImpl extends ServiceImpl<BaseProductSpuMapper,
         queryWrapper.eq(status != null, BaseProductSpu::getStatus, status);
         queryWrapper.eq(BaseProductSpu::getIsDeleted, 0);
         queryWrapper.orderByDesc(BaseProductSpu::getCreateTime);
-        return spuMapper.selectPage(page, queryWrapper);
+        Page<BaseProductSpu> result = spuMapper.selectPage(page, queryWrapper);
+        
+        // 填充分类名称和品牌名称
+        for (BaseProductSpu spu : result.getRecords()) {
+            if (spu.getCategoryId() != null) {
+                BaseCategory category = categoryMapper.selectById(spu.getCategoryId());
+                if (category != null) {
+                    spu.setCategoryName(category.getCategoryName());
+                }
+            }
+            // 品牌名称直接使用品牌字段
+            spu.setBrandName(spu.getBrand());
+        }
+        
+        return result;
     }
 
     /**

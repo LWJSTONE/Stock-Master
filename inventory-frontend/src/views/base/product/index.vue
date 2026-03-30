@@ -399,7 +399,13 @@ export default {
     async loadCategories() {
       try {
         const res = await getCategoryList()
-        this.categoryOptions = res.data || []
+        // 后端返回的是分页数据 {rows: [], total: 0}，需要取 rows
+        const list = res.data.rows || res.data || []
+        // 将 categoryName 映射为 name
+        this.categoryOptions = list.map(item => ({
+          ...item,
+          name: item.categoryName || item.name
+        }))
       } catch (error) {
         console.error('加载分类失败:', error)
       }

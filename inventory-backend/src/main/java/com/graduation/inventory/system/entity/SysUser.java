@@ -82,4 +82,16 @@ public class SysUser extends BaseEntity {
      */
     @TableField(exist = false)
     private List<String> roles;
+
+    /**
+     * 角色ID列表（非数据库字段，用于新增/修改时传递角色）
+     */
+    @TableField(exist = false)
+    private List<Long> roleIds;
+    
+    /**
+     * 部门名称（非数据库字段，用于显示）
+     */
+    @TableField(exist = false)
+    private String deptName;
 }

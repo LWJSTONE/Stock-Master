@@ -56,6 +56,36 @@ public class BaseCustomer extends BaseEntity {
      */
     @ApiModelProperty(value = "地址")
     private String address;
+    
+    /**
+     * 邮箱
+     */
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+    
+    /**
+     * 信用额度
+     */
+    @ApiModelProperty(value = "信用额度")
+    private java.math.BigDecimal creditLimit;
+    
+    /**
+     * 客户等级
+     */
+    @ApiModelProperty(value = "客户等级")
+    private String level;
+    
+    /**
+     * 状态(0禁用 1启用)
+     */
+    @ApiModelProperty(value = "状态(0禁用 1启用)")
+    private Integer status;
+    
+    /**
+     * 备注
+     */
+    @ApiModelProperty(value = "备注")
+    private String remark;
 
     /**
      * 删除标志(0未删除 1已删除)

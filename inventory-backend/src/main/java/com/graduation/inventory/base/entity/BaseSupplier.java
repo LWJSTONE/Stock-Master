@@ -56,12 +56,36 @@ public class BaseSupplier extends BaseEntity {
      */
     @ApiModelProperty(value = "地址")
     private String address;
+    
+    /**
+     * 邮箱
+     */
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+    
+    /**
+     * 开户银行
+     */
+    @ApiModelProperty(value = "开户银行")
+    private String bankName;
 
     /**
      * 银行账号
      */
     @ApiModelProperty(value = "银行账号")
     private String bankAccount;
+    
+    /**
+     * 状态(0禁用 1启用)
+     */
+    @ApiModelProperty(value = "状态(0禁用 1启用)")
+    private Integer status;
+    
+    /**
+     * 备注
+     */
+    @ApiModelProperty(value = "备注")
+    private String remark;
 
     /**
      * 删除标志(0未删除 1已删除)

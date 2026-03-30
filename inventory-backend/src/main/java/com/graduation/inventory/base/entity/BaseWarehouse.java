@@ -50,6 +50,24 @@ public class BaseWarehouse extends BaseEntity {
      */
     @ApiModelProperty(value = "负责人")
     private String principal;
+    
+    /**
+     * 联系电话
+     */
+    @ApiModelProperty(value = "联系电话")
+    private String phone;
+    
+    /**
+     * 仓库面积
+     */
+    @ApiModelProperty(value = "仓库面积")
+    private String area;
+    
+    /**
+     * 备注
+     */
+    @ApiModelProperty(value = "备注")
+    private String remark;
 
     /**
      * 状态(0禁用 1启用)
