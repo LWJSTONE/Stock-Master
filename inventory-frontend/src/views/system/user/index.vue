@@ -45,7 +45,7 @@
         新增
       </el-button>
       <el-button
-        v-permission="'system:user:delete'"
+        v-permission="'system:user:remove'"
         type="danger"
         icon="el-icon-delete"
         :disabled="multipleSelection.length === 0"
@@ -102,7 +102,7 @@
             编辑
           </el-button>
           <el-button
-            v-permission="'system:user:delete'"
+            v-permission="'system:user:remove'"
             type="text"
             size="small"
             style="color: #F56C6C"

@@ -11,6 +11,12 @@ export default {
   inserted(el, binding, vnode) {
     const { value } = binding
     const permissions = store.getters && store.getters.permissions
+    const roles = store.getters && store.getters.roles
+
+    // admin 角色拥有所有权限，直接显示
+    if (roles && roles.includes('admin')) {
+      return
+    }
 
     // 支持字符串和数组两种格式
     let permissionRoles = []
