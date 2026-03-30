@@ -84,4 +84,20 @@ public interface SysUserService extends IService<SysUser> {
      * @return 结果（true唯一 false不唯一）
      */
     boolean checkUsernameUnique(SysUser user);
+
+    /**
+     * 根据用户ID查询用户详情（包含角色ID列表）
+     *
+     * @param userId 用户ID
+     * @return 用户对象（包含roleIds）
+     */
+    SysUser selectUserWithRoleIds(Long userId);
+
+    /**
+     * 根据用户ID查询角色ID列表
+     *
+     * @param userId 用户ID
+     * @return 角色ID列表
+     */
+    List<Long> selectRoleIdsByUserId(Long userId);
 }

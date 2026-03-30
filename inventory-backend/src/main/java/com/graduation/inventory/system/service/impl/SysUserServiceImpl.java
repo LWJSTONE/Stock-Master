@@ -322,4 +322,51 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
         return false;
     }
+
+    /**
+     * 根据用户ID查询用户详情（包含角色ID列表）
+     *
+     * @param userId 用户ID
+     * @return 用户对象（包含roleIds）
+     */
+    @Override
+    public SysUser selectUserWithRoleIds(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+        SysUser user = userMapper.selectById(userId);
+        if (user != null) {
+            // 查询用户的角色ID列表
+            List<Long> roleIds = selectRoleIdsByUserId(userId);
+            user.setRoleIds(roleIds);
+            
+            // 设置部门名称
+            if (user.getDeptId() != null) {
+                SysDept dept = deptMapper.selectById(user.getDeptId());
+                if (dept != null) {
+                    user.setDeptName(dept.getDeptName());
+                }
+            }
+        }
+        return user;
+    }
+
+    /**
+     * 根据用户ID查询角色ID列表
+     *
+     * @param userId 用户ID
+     * @return 角色ID列表
+     */
+    @Override
+    public List<Long> selectRoleIdsByUserId(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+        LambdaQueryWrapper<SysUserRole> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUserRole::getUserId, userId);
+        List<SysUserRole> userRoles = userRoleMapper.selectList(queryWrapper);
+        return userRoles.stream()
+                .map(SysUserRole::getRoleId)
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

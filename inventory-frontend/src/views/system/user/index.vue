@@ -196,6 +196,7 @@
 <script>
 import {
   getUserList,
+  getUserDetail,
   createUser,
   updateUser,
   deleteUser,
@@ -338,11 +339,30 @@ export default {
     },
 
     // 编辑
-    handleUpdate(row) {
+    async handleUpdate(row) {
       this.resetForm()
       this.dialogTitle = '编辑用户'
       this.isEdit = true
-      this.form = { ...this.form, ...row }
+      try {
+        const res = await getUserDetail(row.id)
+        const userData = res.data
+        this.form = {
+          id: userData.id,
+          username: userData.username,
+          password: '',
+          realName: userData.realName,
+          deptId: userData.deptId,
+          phone: userData.phone,
+          email: userData.email,
+          roleIds: userData.roleIds || [],
+          status: userData.status,
+          remark: userData.remark
+        }
+      } catch (error) {
+        console.error('获取用户详情失败:', error)
+        this.$message.error('获取用户详情失败')
+        return
+      }
       this.dialogVisible = true
     },
 

@@ -79,7 +79,7 @@ public class SysUserController {
     @PreAuthorize("@ss.hasPermi('system:user:query')")
     @GetMapping("/{userId}")
     public Result<SysUser> getInfo(@ApiParam("用户ID") @PathVariable Long userId) {
-        return Result.success(sysUserService.getById(userId));
+        return Result.success(sysUserService.selectUserWithRoleIds(userId));
     }
 
     /**
@@ -110,7 +110,7 @@ public class SysUserController {
     @Log(title = "用户管理", action = BusinessType.UPDATE)
     @PutMapping
     public Result<Void> edit(@Validated @RequestBody SysUser user) {
-        return sysUserService.updateById(user) ? Result.success() : Result.error("修改用户失败");
+        return sysUserService.updateUser(user) > 0 ? Result.success() : Result.error("修改用户失败");
     }
 
     /**
