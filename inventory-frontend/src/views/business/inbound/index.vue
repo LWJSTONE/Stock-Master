@@ -112,7 +112,10 @@ export default {
         orderNo: '',
         warehouseId: ''
       },
-      total: 0
+      total: 0,
+      // 详情相关
+      detailVisible: false,
+      detailData: {}
     }
   },
   created() {
@@ -189,6 +192,12 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.pageNum = val
       this.getList()
+    },
+
+    // 查看详情
+    handleView(row) {
+      this.detailData = row
+      this.detailVisible = true
     }
   }
 }
