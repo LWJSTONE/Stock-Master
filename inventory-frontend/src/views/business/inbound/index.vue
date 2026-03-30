@@ -57,7 +57,29 @@
       <el-table-column prop="batchNo" label="批次号" width="120" />
       <el-table-column prop="createTime" label="入库时间" width="160" />
       <el-table-column prop="remark" label="备注" min-width="150" show-overflow-tooltip />
+      <el-table-column label="操作" width="100" fixed="right">
+        <template slot-scope="scope">
+          <el-button type="text" size="small" @click="handleView(scope.row)">查看</el-button>
+        </template>
+      </el-table-column>
     </el-table>
+
+    <!-- 详情弹窗 -->
+    <el-dialog title="入库记录详情" :visible.sync="detailVisible" width="600px">
+      <el-descriptions :column="2" border>
+        <el-descriptions-item label="入库单号">{{ detailData.orderNo }}</el-descriptions-item>
+        <el-descriptions-item label="入库类型">{{ getOrderTypeText(detailData.orderType) }}</el-descriptions-item>
+        <el-descriptions-item label="仓库">{{ getWarehouseName(detailData.warehouseId) }}</el-descriptions-item>
+        <el-descriptions-item label="入库数量">
+          <span style="color: #67C23A">+{{ detailData.changeQty }}</span>
+        </el-descriptions-item>
+        <el-descriptions-item label="SKU编码">{{ detailData.skuCode || '-' }}</el-descriptions-item>
+        <el-descriptions-item label="SKU名称">{{ detailData.skuName || '-' }}</el-descriptions-item>
+        <el-descriptions-item label="批次号">{{ detailData.batchNo || '-' }}</el-descriptions-item>
+        <el-descriptions-item label="入库时间">{{ detailData.createTime }}</el-descriptions-item>
+        <el-descriptions-item label="备注" :span="2">{{ detailData.remark || '-' }}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
 
     <el-pagination
       v-show="total > 0"

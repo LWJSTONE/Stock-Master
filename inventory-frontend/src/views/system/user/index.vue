@@ -202,10 +202,10 @@ import {
   batchDeleteUsers,
   resetPassword,
   changeUserStatus,
-  exportUser
+  exportUser,
+  getDeptTree as getDeptTreeApi,
+  getAllRoles
 } from '@/api/system'
-import { getDeptTree } from '@/api/system'
-import { getAllRoles } from '@/api/system'
 
 export default {
   name: 'UserManagement',
@@ -289,7 +289,7 @@ export default {
     // 获取部门树
     async getDeptTree() {
       try {
-        const res = await getDeptTree()
+        const res = await getDeptTreeApi()
         this.deptOptions = res.data || []
       } catch (error) {
         console.error('获取部门树失败:', error)
