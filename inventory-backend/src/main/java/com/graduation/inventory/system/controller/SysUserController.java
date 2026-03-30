@@ -96,7 +96,7 @@ public class SysUserController {
         if (!sysUserService.checkUsernameUnique(user)) {
             return Result.error("新增用户'" + user.getUsername() + "'失败，用户名已存在");
         }
-        return sysUserService.save(user) ? Result.success() : Result.error("新增用户失败");
+        return sysUserService.insertUser(user) > 0 ? Result.success() : Result.error("新增用户失败");
     }
 
     /**
@@ -137,10 +137,15 @@ public class SysUserController {
     @PreAuthorize("@ss.hasPermi('system:user:resetPwd')")
     @Log(title = "用户管理", action = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
-    public Result<Void> resetPwd(@Validated @RequestBody ResetPwdDto resetPwdDto) {
+    public Result<Void> resetPwd(@RequestBody ResetPwdDto resetPwdDto) {
         SysUser user = new SysUser();
         user.setId(resetPwdDto.getUserId());
-        user.setPassword(resetPwdDto.getPassword());
+        // 如果密码为空，使用默认密码 123456
+        String password = resetPwdDto.getPassword();
+        if (password == null || password.trim().isEmpty()) {
+            password = "123456";
+        }
+        user.setPassword(password);
         return sysUserService.resetPwd(user) > 0 ? Result.success() : Result.error("重置密码失败");
     }
 

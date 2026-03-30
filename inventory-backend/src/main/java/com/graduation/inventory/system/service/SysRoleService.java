@@ -77,4 +77,20 @@ public interface SysRoleService extends IService<SysRole> {
      * @return 结果（true唯一 false不唯一）
      */
     boolean checkRoleKeyUnique(SysRole role);
+
+    /**
+     * 修改角色状态
+     *
+     * @param role 角色信息（包含新状态）
+     * @return 影响行数
+     */
+    int updateStatus(SysRole role);
+
+    /**
+     * 根据角色ID查询菜单ID列表
+     *
+     * @param roleId 角色ID
+     * @return 菜单ID列表
+     */
+    List<Long> selectMenuIdsByRoleId(Long roleId);
 }

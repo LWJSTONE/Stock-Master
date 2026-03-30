@@ -98,8 +98,9 @@ public class SaleController {
     @PreAuthorize("@ss.hasPermi('business:sale:outstock')")
     @Log(title = "销售管理", action = BusinessType.UPDATE)
     @PutMapping("/outstock")
-    public Result<Void> outstock(@ApiParam("销售订单ID") @RequestParam Long saleId) {
-        return saleOrderService.outstock(saleId) ? Result.success() : Result.error("出库失败");
+    public Result<Void> outstock(@ApiParam("销售订单ID") @RequestParam Long saleId,
+                                  @ApiParam("仓库ID") @RequestParam Long warehouseId) {
+        return saleOrderService.outstock(saleId, warehouseId) ? Result.success() : Result.error("出库失败");
     }
 
     /**

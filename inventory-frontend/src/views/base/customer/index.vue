@@ -232,8 +232,9 @@ export default {
     
     // 编辑
     handleUpdate(row) {
+      this.resetForm()
       this.dialogTitle = '编辑客户'
-      this.form = { ...row }
+      this.form = { ...this.form, ...row }
       this.dialogVisible = true
     },
     

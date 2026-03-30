@@ -275,4 +275,47 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
         return false;
     }
+
+    /**
+     * 修改角色状态
+     *
+     * @param role 角色信息（包含新状态）
+     * @return 影响行数
+     */
+    @Override
+    public int updateStatus(SysRole role) {
+        if (role.getId() == null) {
+            throw new ServiceException("角色ID不能为空");
+        }
+        if (StringUtils.isBlank(role.getStatus())) {
+            throw new ServiceException("状态不能为空");
+        }
+
+        // 只更新状态字段
+        SysRole updateRole = new SysRole();
+        updateRole.setId(role.getId());
+        updateRole.setStatus(role.getStatus());
+
+        int result = roleMapper.updateById(updateRole);
+        log.info("修改角色状态成功, 角色ID: {}, 状态: {}", role.getId(), role.getStatus());
+
+        return result;
+    }
+
+    /**
+     * 根据角色ID查询菜单ID列表
+     *
+     * @param roleId 角色ID
+     * @return 菜单ID列表
+     */
+    @Override
+    public List<Long> selectMenuIdsByRoleId(Long roleId) {
+        if (roleId == null) {
+            return List.of();
+        }
+        LambdaQueryWrapper<SysRoleMenu> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysRoleMenu::getRoleId, roleId);
+        List<SysRoleMenu> roleMenus = roleMenuMapper.selectList(queryWrapper);
+        return roleMenus.stream().map(SysRoleMenu::getMenuId).collect(java.util.stream.Collectors.toList());
+    }
 }

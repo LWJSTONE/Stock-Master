@@ -153,4 +153,36 @@ public class SysRoleController {
         int result = sysRoleService.assignMenu(allotMenuDto.getRoleId(), allotMenuDto.getMenuIds().toArray(new Long[0]));
         return result > 0 ? Result.success() : Result.error("分配菜单权限失败");
     }
+
+    /**
+     * 获取角色菜单权限
+     *
+     * @param roleId 角色ID
+     * @return 菜单ID列表
+     */
+    @ApiOperation("获取角色菜单权限")
+    @PreAuthorize("@ss.hasPermi('system:role:query')")
+    @GetMapping("/menu/{roleId}")
+    public Result<List<Long>> getRoleMenus(@ApiParam("角色ID") @PathVariable Long roleId) {
+        return Result.success(sysRoleService.selectMenuIdsByRoleId(roleId));
+    }
+
+    /**
+     * 修改角色状态
+     *
+     * @param roleId 角色ID
+     * @param status 状态
+     * @return 结果
+     */
+    @ApiOperation("修改角色状态")
+    @PreAuthorize("@ss.hasPermi('system:role:edit')")
+    @Log(title = "角色管理", action = BusinessType.UPDATE)
+    @PutMapping("/status/{roleId}")
+    public Result<Void> changeStatus(@ApiParam("角色ID") @PathVariable Long roleId,
+                                     @ApiParam("状态") @RequestParam String status) {
+        SysRole role = new SysRole();
+        role.setId(roleId);
+        role.setStatus(status);
+        return sysRoleService.updateStatus(role) > 0 ? Result.success() : Result.error("修改角色状态失败");
+    }
 }

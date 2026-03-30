@@ -61,9 +61,10 @@ public interface BusSaleOrderService extends IService<BusSaleOrder> {
      * 执行出库
      *
      * @param saleId 销售订单ID
+     * @param warehouseId 仓库ID
      * @return 是否成功
      */
-    boolean outstock(Long saleId);
+    boolean outstock(Long saleId, Long warehouseId);
 
     /**
      * 取消订单

@@ -168,7 +168,7 @@ public class BusSaleOrderServiceImpl extends ServiceImpl<BusSaleOrderMapper, Bus
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean outstock(Long saleId) {
+    public boolean outstock(Long saleId, Long warehouseId) {
         BusSaleOrder order = baseMapper.selectById(saleId);
         if (order == null) {
             throw new ServiceException("销售订单不存在");
@@ -188,16 +188,16 @@ public class BusSaleOrderServiceImpl extends ServiceImpl<BusSaleOrderMapper, Bus
         // 生成出库批次号
         String batchNo = "OUT" + System.currentTimeMillis();
 
-        // 处理每个商品明细 - 需要找到有库存的仓库
+        // 处理每个商品明细 - 使用指定的仓库
         for (BusSaleItem item : items) {
-            // 查询有库存的仓库（取第一个有足够库存的仓库）
+            // 查询指定仓库的库存
             LambdaQueryWrapper<StockMain> stockWrapper = new LambdaQueryWrapper<>();
             stockWrapper.eq(StockMain::getSkuId, item.getSkuId());
-            stockWrapper.ge(StockMain::getQuantity, item.getQuantity());
+            stockWrapper.eq(StockMain::getWarehouseId, warehouseId);
             StockMain stock = stockMainMapper.selectOne(stockWrapper);
 
             if (stock == null) {
-                throw new ServiceException("商品 " + item.getSkuName() + " 库存不足或无库存记录");
+                throw new ServiceException("商品 " + item.getSkuName() + " 在指定仓库无库存记录");
             }
 
             BigDecimal beforeQty = stock.getQuantity();
@@ -215,7 +215,7 @@ public class BusSaleOrderServiceImpl extends ServiceImpl<BusSaleOrderMapper, Bus
             StockRecord record = new StockRecord();
             record.setOrderNo(order.getSaleNo());
             record.setOrderType(2); // 销售出库
-            record.setWarehouseId(stock.getWarehouseId());
+            record.setWarehouseId(warehouseId);
             record.setSkuId(item.getSkuId());
             record.setChangeQty(item.getQuantity().negate()); // 出库为负数
             record.setBeforeQty(beforeQty);
